@@ -2,6 +2,7 @@
   "main": "chat.html",
   "name": "人工智能聊天机器人",
   "window": {
+  	"icon": "chat.png",
     "toolbar": false,
     "frame": true,
     "width": 430,
