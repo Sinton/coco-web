@@ -1,0 +1,11 @@
+{
+  "main": "chat.html",
+  "name": "人工智能聊天机器人",
+  "window": {
+    "toolbar": false,
+    "frame": true,
+    "width": 430,
+    "height": 450,
+    "resizable": false
+  }
+}
