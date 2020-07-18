@@ -355,6 +355,22 @@ export const asyncRouterMap = [
         meta: { title: '共享资源', icon: 'share-alt' },
         children: [
           {
+            path: '/resources/hosts',
+            name: 'Hosts',
+            component: RouteView,
+            meta: { title: '主机', keepAlive: false, hiddenHeaderContent: false },
+            redirect: '/resources/hosts',
+            hideChildrenInMenu: true,
+            children: [
+              {
+                path: '/resources/hosts',
+                name: 'HostsList',
+                component: () => import(/* webpackChunkName: "StacksList" */ '@/views/resources/hosts'),
+                meta: { title: '主机列表', keepAlive: false }
+              }
+            ]
+          },
+          {
             path: '/resources/stacks',
             name: 'Stacks',
             component: RouteView,
