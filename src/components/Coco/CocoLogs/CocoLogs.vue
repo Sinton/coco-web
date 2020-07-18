@@ -47,20 +47,21 @@
         </a-form>
       </a-col>
       <a-col span="20">
-        <div style="max-height: 400px; overflow-y: auto;">
-          <coco-web-terminal @write="write" ref="terminalRef"/>
-        </div>
+        <web-terminal style="max-height: 400px; overflow-y: auto;"
+                      :attach="false"
+                      @write="write"
+                      ref="terminalRef"/>
       </a-col>
     </a-row>
   </a-drawer>
 </template>
 
 <script>
-  import { CocoWebTerminal } from '@/components/Coco'
+  import { WebTerminal } from '@/components/Coco'
 
   export default {
     name: 'CocoLogs',
-    components: { CocoWebTerminal },
+    components: { WebTerminal },
     props: {
       visible: {
         type: Boolean,

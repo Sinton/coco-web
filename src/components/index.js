@@ -33,6 +33,7 @@ import ArticleListContent from '@/components/ArticleListContent'
 import {
   CocoTopic,
   CocoEditTable,
+  WebTerminal,
   CocoWebTerminal,
   CocoLogs,
   CocoShield,
@@ -79,6 +80,7 @@ export {
   JsonViewer,
   CocoTopic,
   CocoEditTable,
+  WebTerminal,
   CocoWebTerminal,
   CocoLogs,
   CocoShield,

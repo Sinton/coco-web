@@ -1,5 +1,6 @@
 import CocoTopic from './CocoTopic/CocoTopic'
 import CocoEditTable from './CocoEditTable/CocoEditTable'
+import WebTerminal from './CocoWebTerminal/WebTerminal'
 import CocoWebTerminal from './CocoWebTerminal/CocoWebTerminal'
 import CocoLogs from './CocoLogs/CocoLogs'
 import CocoShield from './CocoShield/CocoShield'
@@ -14,6 +15,7 @@ import CocoIconKubernetes from '@/components/Coco/CocoIcon/CocoIconKubernetes'
 export {
   CocoTopic,
   CocoEditTable,
+  WebTerminal,
   CocoWebTerminal,
   CocoLogs,
   CocoShield,
