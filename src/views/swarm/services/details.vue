@@ -1,5 +1,13 @@
 <template>
   <page-view>
+    <a-collapse default-active-key="1" :bordered="false" style="margin-bottom: 25px">
+      <a-collapse-panel key="1" header="服务的类型">
+        <p>暂无说明</p>
+      </a-collapse-panel>
+      <a-collapse-panel key="2" header="无状态服务和有状态服务的使用场景?">
+        <p>暂无说明</p>
+      </a-collapse-panel>
+    </a-collapse>
     <a-row>
       <a-col span="18">
         <a-card :title="'服务详情'" :bordered="false" style="margin-bottom: 20px;" id="service-details">

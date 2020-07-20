@@ -3,7 +3,7 @@
     <a-card :title="'服务列表'" :bordered="false">
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['servicesRef'].refresh()">刷新</a-button>
-        <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0">删除</a-button>
+        <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeService">删除</a-button>
         <a-button type="primary" icon="plus">创建服务</a-button>
       </div>
       <s-table ref="servicesRef"
@@ -20,9 +20,7 @@
           </router-link>
           <a-tooltip placement="right">
             <a-icon type="info-circle"/>
-            <template slot="title">
-              服务ID: {{ text }}
-            </template>
+            <template slot="title">服务ID: {{ text }}</template>
           </a-tooltip>
         </template>
         <template slot="Image" slot-scope="text, record">
@@ -194,13 +192,9 @@
 
         // custom table alert & rowSelection
         options: {
-          alert: {
-            show: true,
-            clear: () => {
-              this.selectedRowKeys = []
-            }
-          },
+          alert: { show: true, clear: () => { this.selectedRowKeys = [] } },
           rowSelection: {
+            selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
             onChange: this.onSelectChange
           }
@@ -265,10 +259,36 @@
           }
         })
       },
+      onSelectChange(selectedRowKeys, selectedRows) {
+        this.selectedRowKeys = selectedRowKeys
+        this.selectedRows = selectedRows
+      },
       expandedChanged(expand, record) {
         if (expand) {
           this.expandedRow = record
         }
+      },
+      removeService() {
+        this.selectedRows.forEach(item => {
+          const params = {
+            serviceId: item.ID
+          }
+          invokeApi('/service/remove', params).then(response => {
+            if (response.code === 2000) {
+              this.selectedRows = []
+              this.selectedRowKeys = []
+              this.$refs['servicesRef'].selectedRows = this.selectedRows
+              this.$refs['servicesRef'].selectedRowKeys = this.selectedRowKeys
+              this.$notification.success({ message: '提示', description: response.data })
+            } else {
+              this.$notification.error({ message: '提示', description: response.data })
+            }
+          }).catch(() => {
+            this.$notification.error({ message: '错误', description: '请求接口异常' })
+          }).finally(() => {
+            this.$refs['servicesRef'].refresh()
+          })
+        })
       },
       getRunningTasks(serviceId, mode) {
         this.loadTasks(null).then(response => {
