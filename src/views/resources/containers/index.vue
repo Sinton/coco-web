@@ -96,12 +96,20 @@
                :logs="containerLogs"
                @close="() => this.visibleLogs = false"
                ref="containerLogsRef"/>
+    <!-- 容器终端 -->
+    <coco-web-terminal :visible="visibleTerminal"
+                       :title="'容器终端'"
+                       :socket="this.$socket"
+                       :send-socket-event="sendSocketEvent"
+                       :extend-params="extendParams"
+                       @close="() => this.visibleTerminal = false"
+                       ref="containerTerminalRef"/>
   </page-view>
 </template>
 
 <script>
   import { PageView, RouteView } from '@/layouts'
-  import { STable, JsonViewer, CocoLogs, CocoJsonViewer } from '@/components'
+  import { STable, JsonViewer, CocoLogs, CocoJsonViewer, CocoWebTerminal } from '@/components'
   import DetailList from '@/components/tools/DetailList'
   import ContainerDeploy from './deploy'
   import { invokeApi } from '@api/http'
@@ -119,10 +127,13 @@
       DetailListItem,
       CocoLogs,
       CocoJsonViewer,
+      CocoWebTerminal,
       ContainerDeploy
     },
     data() {
       return {
+        sendSocketEvent: 'containerTerminal',
+        extendParams: {},
         queryParam: {},
         columns: [
           {
@@ -218,7 +229,9 @@
         visibleInspect: false,
         containerInspect: {},
         visibleLogs: false,
-        containerLogs: null
+        containerLogs: null,
+        visibleTerminal: false,
+        currContainerTerminal: null
       }
     },
     filters: {
@@ -333,7 +346,12 @@
         })
       },
       terminal(containerId) {
-        console.log(containerId)
+        this.visibleTerminal = true
+        this.currContainerTerminal = containerId
+        this.extendParams = {
+          containerId: containerId
+        }
+        this.$socket.emit('containerTerminal', this.extendParams)
       },
       // 变更容器状态
       changeContainerStatus(containerId, action) {
@@ -373,7 +391,18 @@
             this.$refs['containersRef'].refresh()
           })
         })
+      },
+      delegateSocketEvent() {
+        this.sockets.listener.subscribe('terminal', (data) => {
+          if (data.indexOf('exit') >= 0) {
+            const params = { 'containerId': this.currContainerTerminal }
+            this.$socket.emit('closeContainerTerminal', params)
+          }
+        })
       }
+    },
+    mounted() {
+      this.delegateSocketEvent()
     }
   }
 </script>

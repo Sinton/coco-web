@@ -10,6 +10,9 @@
                   :host="host"
                   :port="port"
                   :socket="socket"
+                  :send-socket-event="sendSocketEvent"
+                  :receive-socket-event="receiveSocketEvent"
+                  :extend-params="extendParams"
                   ref="terminalRef"/>
   </a-drawer>
 </template>
@@ -44,6 +47,18 @@
       socket: {
         type: Object,
         default: null
+      },
+      sendSocketEvent: {
+        type: String,
+        default: 'terminal'
+      },
+      receiveSocketEvent: {
+        type: String,
+        default: 'terminal'
+      },
+      extendParams: {
+        type: Object,
+        default: {}
       }
     },
     data() {

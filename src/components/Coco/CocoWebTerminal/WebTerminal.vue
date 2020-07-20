@@ -45,6 +45,18 @@
       attach: {
         type: Boolean,
         default: true
+      },
+      sendSocketEvent: {
+        type: String,
+        default: 'terminal'
+      },
+      receiveSocketEvent: {
+        type: String,
+        default: 'terminal'
+      },
+      extendParams: {
+        type: Object,
+        default: {}
       }
     },
     data() {
@@ -60,8 +72,9 @@
       },
       attachTerminal() {
         terminal.on('data', (command) => {
-          const params = {'operate': 'command', 'command': command}
-          this.socket.emit('terminal', params)
+          let params = {'operate': 'command', 'command': command}
+          params = { ...params, ...this.extendParams }
+          this.socket.emit(this.sendSocketEvent, params)
         })
       },
       delegateEvent() {
@@ -69,7 +82,7 @@
           this.sockets.listener.subscribe('disconnect', () => {
             // TODO 断开WebSocket连接
           })
-          this.sockets.listener.subscribe('terminal', (data) => {
+          this.sockets.listener.subscribe(this.receiveSocketEvent, (data) => {
             terminal.write(data)
           })
         }
