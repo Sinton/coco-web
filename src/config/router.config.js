@@ -364,9 +364,25 @@ export const asyncRouterMap = [
             children: [
               {
                 path: '/resources/hosts',
-                name: 'HostsList',
-                component: () => import(/* webpackChunkName: "StacksList" */ '@/views/resources/hosts'),
+                name: 'HostList',
+                component: () => import(/* webpackChunkName: "StackList" */ '@/views/resources/hosts'),
                 meta: { title: '主机列表', keepAlive: false }
+              }
+            ]
+          },
+          {
+            path: '/resources/endpoints',
+            name: 'Endpoints',
+            component: RouteView,
+            meta: { title: '服务终端', keepAlive: false, hiddenHeaderContent: false },
+            redirect: '/resources/endpoints',
+            hideChildrenInMenu: true,
+            children: [
+              {
+                path: '/resources/endpoints',
+                name: 'EndpointList',
+                component: () => import(/* webpackChunkName: "EndpointList" */ '@views/resources/endpoints'),
+                meta: { title: '终端列表', keepAlive: false }
               }
             ]
           },
@@ -380,8 +396,8 @@ export const asyncRouterMap = [
             children: [
               {
                 path: '/resources/stacks',
-                name: 'StacksList',
-                component: () => import(/* webpackChunkName: "StacksList" */ '@/views/resources/stacks'),
+                name: 'StackList',
+                component: () => import(/* webpackChunkName: "StackList" */ '@/views/resources/stacks'),
                 meta: { title: '应用栈列表', keepAlive: false }
               }
             ]
@@ -396,8 +412,8 @@ export const asyncRouterMap = [
             children: [
               {
                 path: '/resources/images',
-                name: 'ImagesList',
-                component: () => import(/* webpackChunkName: "ImagesList" */ '@/views/resources/images'),
+                name: 'ImageList',
+                component: () => import(/* webpackChunkName: "ImageList" */ '@/views/resources/images'),
                 meta: { title: '镜像', keepAlive: true }
               },
               {
@@ -418,8 +434,8 @@ export const asyncRouterMap = [
             children: [
               {
                 path: '/resources/containers',
-                name: 'ContainersList',
-                component: () => import(/* webpackChunkName: "ContainersList" */ '@/views/resources/containers'),
+                name: 'ContainerList',
+                component: () => import(/* webpackChunkName: "ContainerList" */ '@/views/resources/containers'),
                 meta: { title: '容器列表', keepAlive: false }
               },
               {
@@ -452,8 +468,8 @@ export const asyncRouterMap = [
             children: [
               {
                 path: '/resources/networks',
-                name: 'NetworksList',
-                component: () => import(/* webpackChunkName: "NetworksList" */ '@/views/resources/networks'),
+                name: 'NetworkList',
+                component: () => import(/* webpackChunkName: "NetworkList" */ '@/views/resources/networks'),
                 meta: { title: '网络列表', keepAlive: false }
               },
               {
@@ -474,8 +490,8 @@ export const asyncRouterMap = [
             children: [
               {
                 path: '/resources/volumes',
-                name: 'VolumesList',
-                component: () => import(/* webpackChunkName: "VolumesList" */ '@/views/resources/volumes'),
+                name: 'VolumeList',
+                component: () => import(/* webpackChunkName: "VolumeList" */ '@/views/resources/volumes'),
                 meta: { title: '存储卷列表', keepAlive: false }
               },
               {
@@ -506,8 +522,8 @@ export const asyncRouterMap = [
             children: [
               {
                 path: '/swarm/nodes',
-                name: 'NodesList',
-                component: () => import(/* webpackChunkName: "NodesList" */ '@/views/swarm/nodes'),
+                name: 'NodeList',
+                component: () => import(/* webpackChunkName: "NodeList" */ '@/views/swarm/nodes'),
                 meta: { title: '集群节点列表', keepAlive: false }
               },
               {
@@ -528,8 +544,8 @@ export const asyncRouterMap = [
             children: [
               {
                 path: '/swarm/services',
-                name: 'ServicesList',
-                component: () => import(/* webpackChunkName: "ServicesList" */ '@/views/swarm/services'),
+                name: 'ServiceList',
+                component: () => import(/* webpackChunkName: "ServiceList" */ '@/views/swarm/services'),
                 meta: { title: '服务列表', keepAlive: false }
               },
               {
@@ -550,8 +566,8 @@ export const asyncRouterMap = [
             children: [
               {
                 path: '/swarm/configs',
-                name: 'ConfigsList',
-                component: () => import(/* webpackChunkName: "ConfigsList" */ '@/views/swarm/configs'),
+                name: 'ConfigList',
+                component: () => import(/* webpackChunkName: "ConfigList" */ '@/views/swarm/configs'),
                 meta: { title: '配置项列表', keepAlive: false }
               }
             ]
@@ -566,8 +582,8 @@ export const asyncRouterMap = [
             children: [
               {
                 path: '/swarm/secrets',
-                name: 'SecretsList',
-                component: () => import(/* webpackChunkName: "SecretsList" */ '@/views/swarm/secrets'),
+                name: 'SecretList',
+                component: () => import(/* webpackChunkName: "SecretList" */ '@/views/swarm/secrets'),
                 meta: { title: '加密配置项列表', keepAlive: false }
               }
             ]
@@ -590,12 +606,6 @@ export const asyncRouterMap = [
         component: RouteView,
         meta: { title: '设置', icon: 'setting' },
         children: [
-          {
-            path: '/setting/endpoints',
-            name: 'Endpoints',
-            component: () => import(/* webpackChunkName: "Endpoints" */ '@/views/setting/endpoints'),
-            meta: { title: '服务终端', keepAlive: false }
-          },
           {
             path: '/setting/registrys',
             name: 'Registrys',
