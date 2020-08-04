@@ -32,7 +32,7 @@
               size="large"
               type="password"
               autocomplete="false"
-              placeholder="密码: admin or ant.design"
+              placeholder="密码: admin"
               v-decorator="[
                 'password',
                 {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
@@ -248,7 +248,7 @@
       },
       loginSuccess(res) {
         console.log(res)
-        this.$router.push({ name: 'dashboard' })
+        this.$router.push({ name: 'About' })
         // 延迟 1 秒显示欢迎信息
         setTimeout(() => {
           this.$notification.success({
