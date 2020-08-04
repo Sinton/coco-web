@@ -8,129 +8,118 @@
         <p>暂无说明</p>
       </a-collapse-panel>
     </a-collapse>
-    <a-row>
-      <a-col span="18">
-        <a-card :title="'服务详情'" :bordered="false" style="margin-bottom: 20px;" id="service-details">
-          {{ details }}
-        </a-card>
-        <a-card :title="'容器规格'" :bordered="false" style="margin-bottom: 20px;" id="container-specification">
-          {{ containerSpec }}
-        </a-card>
-        <a-card :title="'环境变量'" :bordered="false" style="margin-bottom: 20px;" class="compact" id="environment-variables">
-          <a-table :columns="envs.columns"
-                   :dataSource="envs.data"
-                   :pagination="false">
-            <template slot="action" slot-scope="text, record">
-              <a-button icon="minus-circle" type="danger" size="small">移除</a-button>
-            </template>
-            <div slot="footer" style="text-align: right;">
-              <a style="float:left;"><a-button type="primary" icon="check" size="small" style="margin-right: 5px">应用变更</a-button></a>
-              <a><a-button shape="circle" type="primary" icon="plus" size="small" style="margin-right: 5px"></a-button>添加环境变量</a>
-            </div>
-          </a-table>
-        </a-card>
-        <a-card :title="'容器标签'" :bordered="false" style="margin-bottom: 20px;" class="compact">
-          <a-table :columns="containerLabels.columns"
-                   :dataSource="containerLabels.data"
-                   :pagination="false">
-            <template slot="action" slot-scope="text, record">
-              <a-button icon="minus-circle" type="danger" size="small">移除</a-button>
-            </template>
-            <div slot="footer" style="text-align: right;">
-              <a style="float:left;"><a-button type="primary" icon="check" size="small" style="margin-right: 5px">应用变更</a-button></a>
-              <a><a-button shape="circle" type="primary" icon="plus" size="small" style="margin-right: 5px"></a-button>添加容器标签</a>
-            </div>
-          </a-table>
-        </a-card>
-        <a-card :title="'卷挂载'" :bordered="false" style="margin-bottom: 20px;" class="compact">
-          <a-table :columns="mounts.columns"
-                   :dataSource="mounts.data"
-                   :pagination="false">
-            <template slot="ReadOnly" slot-scope="text, record">
-              <a-switch :defaultChecked="text !== null && text === true">
-                <a-icon type="check" slot="checkedChildren"/>
-                <a-icon type="close" slot="unCheckedChildren"/>
-              </a-switch>
-            </template>
-            <template slot="action" slot-scope="text, record">
-              <a-button icon="minus-circle" type="danger" size="small">移除</a-button>
-            </template>
-            <div slot="footer" style="text-align: right;">
-              <a style="float:left;"><a-button type="primary" icon="check" size="small" style="margin-right: 5px">应用变更</a-button></a>
-              <a><a-button shape="circle" type="primary" icon="plus" size="small" style="margin-right: 5px;"></a-button>添加环境变量</a>
-            </div>
-          </a-table>
-        </a-card>
-        <a-card :title="'网络'" :bordered="false" style="margin-bottom: 20px;">
-          {{ networks }}
-        </a-card>
-        <a-card :title="'端口映射'" :bordered="false" style="margin-bottom: 20px;">
-        </a-card>
-        <a-card :title="'资源限制与配额'" :bordered="false" style="margin-bottom: 20px;">
-        </a-card>
-        <a-card :title="'约束条件'" :bordered="false" style="margin-bottom: 20px;">
-          {{ placementConstraints }}
-        </a-card>
-        <a-card :title="'重启策略'" :bordered="false" style="margin-bottom: 20px;">
-          {{ restartPolicy }}
-        </a-card>
-        <a-card :title="'更新配置'" :bordered="false" style="margin-bottom: 20px;">
-        </a-card>
-        <a-card :title="'日志驱动'" :bordered="false" style="margin-bottom: 20px;">
-        </a-card>
-        <a-card :title="'服务标签'" :bordered="false" style="margin-bottom: 20px;">
-          {{ serviceLabels }}
-        </a-card>
-        <a-card :title="'配置项'" :bordered="false" style="margin-bottom: 20px;">
-          {{ configs }}
-        </a-card>
-        <a-card :title="'加密配置项'" :bordered="false" style="margin-bottom: 20px;">
-          {{ secrets }}
-        </a-card>
-        <a-card :title="'任务详情'" :bordered="false" >
-          <s-table rowKey="key"
-                   size="middle"
-                   :columns="taskColumns"
-                   :data="loadTasks"
-                   :showPagination="false"
-                   :alert="null"
-                   :rowSelection="null">
-            <template slot="Status" slot-scope="text, record">
-              <template>
-                <a-tag :color="taskState[record['Status']['State']]['color']">
-                  {{ taskState[record['Status']['State']]['alias'] }}
-                </a-tag>
-                <a-tooltip v-if="['failed', 'rejected'].includes(record['Status']['State'])" placement="right">
-                  <a-icon type="info-circle"/>
-                  <template slot="title">
-                    调度异常信息: {{ record['Status'][taskState[record['Status']['State']]['tip']] }}
-                  </template>
-                </a-tooltip>
+    <a-card :title="'服务详情'" :bordered="false" style="margin-bottom: 20px;" id="service-details">
+      {{ details }}
+    </a-card>
+    <a-card :title="'容器规格'" :bordered="false" style="margin-bottom: 20px;" id="container-specification">
+      {{ containerSpec }}
+    </a-card>
+    <a-card :title="'环境变量'" :bordered="false" style="margin-bottom: 20px;" class="compact" id="environment-variables">
+      <a-table :columns="envs.columns"
+               :dataSource="envs.data"
+               :pagination="false">
+        <template slot="action" slot-scope="text, record">
+          <a-button icon="minus-circle" type="danger" size="small">移除</a-button>
+        </template>
+        <div slot="footer" style="text-align: right;">
+          <a style="float:left;"><a-button type="primary" icon="check" size="small" style="margin-right: 5px">应用变更</a-button></a>
+          <a><a-button shape="circle" type="primary" icon="plus" size="small" style="margin-right: 5px"></a-button>添加环境变量</a>
+        </div>
+      </a-table>
+    </a-card>
+    <a-card :title="'容器标签'" :bordered="false" style="margin-bottom: 20px;" class="compact">
+      <a-table :columns="containerLabels.columns"
+               :dataSource="containerLabels.data"
+               :pagination="false">
+        <template slot="action" slot-scope="text, record">
+          <a-button icon="minus-circle" type="danger" size="small">移除</a-button>
+        </template>
+        <div slot="footer" style="text-align: right;">
+          <a style="float:left;"><a-button type="primary" icon="check" size="small" style="margin-right: 5px">应用变更</a-button></a>
+          <a><a-button shape="circle" type="primary" icon="plus" size="small" style="margin-right: 5px"></a-button>添加容器标签</a>
+        </div>
+      </a-table>
+    </a-card>
+    <a-card :title="'卷挂载'" :bordered="false" style="margin-bottom: 20px;" class="compact">
+      <a-table :columns="mounts.columns"
+               :dataSource="mounts.data"
+               :pagination="false">
+        <template slot="ReadOnly" slot-scope="text, record">
+          <a-switch :defaultChecked="text !== null && text === true">
+            <a-icon type="check" slot="checkedChildren"/>
+            <a-icon type="close" slot="unCheckedChildren"/>
+          </a-switch>
+        </template>
+        <template slot="action" slot-scope="text, record">
+          <a-button icon="minus-circle" type="danger" size="small">移除</a-button>
+        </template>
+        <div slot="footer" style="text-align: right;">
+          <a style="float:left;"><a-button type="primary" icon="check" size="small" style="margin-right: 5px">应用变更</a-button></a>
+          <a><a-button shape="circle" type="primary" icon="plus" size="small" style="margin-right: 5px;"></a-button>添加环境变量</a>
+        </div>
+      </a-table>
+    </a-card>
+    <a-card :title="'网络'" :bordered="false" style="margin-bottom: 20px;">
+      {{ networks }}
+    </a-card>
+    <a-card :title="'端口映射'" :bordered="false" style="margin-bottom: 20px;">
+    </a-card>
+    <a-card :title="'资源限制与配额'" :bordered="false" style="margin-bottom: 20px;">
+    </a-card>
+    <a-card :title="'约束条件'" :bordered="false" style="margin-bottom: 20px;">
+      {{ placementConstraints }}
+    </a-card>
+    <a-card :title="'重启策略'" :bordered="false" style="margin-bottom: 20px;">
+      {{ restartPolicy }}
+    </a-card>
+    <a-card :title="'更新配置'" :bordered="false" style="margin-bottom: 20px;">
+    </a-card>
+    <a-card :title="'日志驱动'" :bordered="false" style="margin-bottom: 20px;">
+    </a-card>
+    <a-card :title="'服务标签'" :bordered="false" style="margin-bottom: 20px;">
+      {{ serviceLabels }}
+    </a-card>
+    <a-card :title="'配置项'" :bordered="false" style="margin-bottom: 20px;">
+      {{ configs }}
+    </a-card>
+    <a-card :title="'加密配置项'" :bordered="false" style="margin-bottom: 20px;">
+      {{ secrets }}
+    </a-card>
+    <a-card :title="'任务详情'" :bordered="false" >
+      <s-table rowKey="key"
+               size="middle"
+               :columns="taskColumns"
+               :data="loadTasks"
+               :showPagination="false"
+               :alert="null"
+               :rowSelection="null">
+        <template slot="Status" slot-scope="text, record">
+          <template>
+            <a-tag :color="taskState[record['Status']['State']]['color']">
+              {{ taskState[record['Status']['State']]['alias'] }}
+            </a-tag>
+            <a-tooltip v-if="['failed', 'rejected'].includes(record['Status']['State'])" placement="right">
+              <a-icon type="info-circle"/>
+              <template slot="title">
+                调度异常信息: {{ record['Status'][taskState[record['Status']['State']]['tip']] }}
               </template>
-            </template>
-            <template slot="UpdatedAt" slot-scope="text">
-              {{ text | moment }}
-            </template>
-            <template slot="action" slot-scope="text, record">
-              <a @click="logs(record.Id)">日志</a>
-              <a-divider type="vertical"/>
-              <a @click="inspect(record.Id)">摘要</a>
-              <a-divider v-if="record['Status']['State'] === 'running'" type="vertical"/>
-              <a v-if="record['Status']['State'] === 'running'" @click="monitor(record.Id)">监控</a>
-              <a-divider v-if="record['Status']['State'] === 'running'" type="vertical"/>
-              <a v-if="record['Status']['State'] === 'running'" @click="terminal(record.Id)">终端</a>
-            </template>
-          </s-table>
-        </a-card>
-      </a-col>
-      <a-col offset="1" span="5">
-        <a-anchor :showInkInFixed="true" :offsetTop="165" style="max-height: calc(100vh - 100px);">
-          <a-anchor-link href="#service-details" title="服务详情"/>
-          <a-anchor-link href="#container-specification" title="容器规格"/>
-          <a-anchor-link href="#environment-variables" title="环境变量"/>
-        </a-anchor>
-      </a-col>
-    </a-row>
+            </a-tooltip>
+          </template>
+        </template>
+        <template slot="UpdatedAt" slot-scope="text">
+          {{ text | moment }}
+        </template>
+        <template slot="action" slot-scope="text, record">
+          <a @click="logs(record.Id)">日志</a>
+          <a-divider type="vertical"/>
+          <a @click="inspect(record.Id)">摘要</a>
+          <a-divider v-if="record['Status']['State'] === 'running'" type="vertical"/>
+          <a v-if="record['Status']['State'] === 'running'" @click="monitor(record.Id)">监控</a>
+          <a-divider v-if="record['Status']['State'] === 'running'" type="vertical"/>
+          <a v-if="record['Status']['State'] === 'running'" @click="terminal(record.Id)">终端</a>
+        </template>
+      </s-table>
+    </a-card>
   </page-view>
 </template>
 

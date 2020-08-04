@@ -114,7 +114,6 @@
     },
     data() {
       return {
-        advanced: false,
         queryParam: {},
         columns: [
           {
@@ -157,7 +156,6 @@
             onChange: this.onSelectChange
           }
         },
-
         pullImageForm: this.$form.createForm(this),
         imagesPullProgress: [],
         pulling: false,
@@ -206,7 +204,7 @@
         return []
       },
       loadImages(params) {
-        params['filter'] = { all: true }
+        params['filter'] = { all: true, dangling: false }
         return invokeApi('/image/list', { ...params, ...this.queryParam }).then(response => {
           if (response.code === 2000) {
             return response.data
@@ -218,9 +216,6 @@
       onSelectChange(selectedRowKeys, selectedRows) {
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
-      },
-      toggleAdvanced() {
-        this.advanced = !this.advanced
       },
       inspectImage(imageId) {
         const params = {
