@@ -1,11 +1,16 @@
 <template>
   <page-view>
     <a-card :title="'加密配置项列表'" :bordered="false">
-      <s-table ref="table"
+      <div class="table-operator">
+        <a-button icon="reload" @click="() => $refs['configsRef'].refresh()">刷新</a-button>
+        <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeSecret">删除</a-button>
+        <a-button type="primary" icon="plus">添加新密钥配置</a-button>
+      </div>
+      <s-table ref="secretsRef"
                rowKey="key"
                size="middle"
                :columns="columns"
-               :data="loadSecret"
+               :data="loadSecrets"
                :alert="options.alert"
                :rowSelection="options.rowSelection">
         <!-- 加密配置名称/ID -->
@@ -28,11 +33,6 @@
         <template slot="UpdatedAt" slot-scope="text">
           {{ text | moment }}
         </template>
-        <template slot="action" slot-scope="text, record">
-          <span>摘要</span>
-          <a-divider type="vertical"/>
-          <span>删除</span>
-        </template>
       </s-table>
     </a-card>
   </page-view>
@@ -51,23 +51,7 @@
     },
     data() {
       return {
-        queryParam: [],
-        selectedRowKeys: [],
-        selectedRows: [],
-
-        // custom table alert & rowSelection
-        options: {
-          alert: {
-            show: true,
-            clear: () => {
-              this.selectedRowKeys = []
-            }
-          },
-          rowSelection: {
-            selectedRowKeys: this.selectedRowKeys,
-            onChange: this.onSelectChange
-          }
-        },
+        queryParam: {},
         columns: [
           {
             title: '加密配置名称/ID',
@@ -94,19 +78,49 @@
             scopedSlots: { customRender: 'action' },
             fixed: 'right'
           }
-        ]
+        ],
+        selectedRowKeys: [],
+        selectedRows: [],
+        // custom table alert & rowSelection
+        options: {
+          alert: { show: true, clear: () => { this.selectedRowKeys = [] } },
+          rowSelection: {
+            selectedRows: this.selectedRows,
+            selectedRowKeys: this.selectedRowKeys,
+            onChange: this.onSelectChange
+          }
+        }
       }
     },
     methods: {
-      loadSecret(params) {
+      removeSecret() {
+        this.selectedRows.forEach(item => {
+          const params = {
+            secretId: item.ID
+          }
+          invokeApi('/secret/remove', params).then(response => {
+            if (response.code === 2000) {
+              this.selectedRows = []
+              this.selectedRowKeys = []
+              this.$refs['secretsRef'].selectedRows = this.selectedRows
+              this.$refs['secretsRef'].selectedRowKeys = this.selectedRowKeys
+              this.$notification.success({ message: '提示', description: response.data })
+            } else {
+              this.$notification.error({ message: '提示', description: response.data })
+            }
+          }).catch(() => {
+            this.$notification.error({ message: '错误', description: '请求接口异常' })
+          }).finally(() => {
+            this.$refs['secretsRef'].refresh()
+          })
+        })
+      },
+      loadSecrets(params) {
         return invokeApi('/secret/list', { ...params, ...this.queryParam }).then(response => {
           if (response.code === 2000) {
             return response.data
           } else {
-            this.$notification.error({
-              message: '标题',
-              description: '加载数据失败'
-            })
+            this.$notification.error({ message: '标题', description: '加载数据失败' })
           }
         })
       }
