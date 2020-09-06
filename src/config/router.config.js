@@ -439,6 +439,12 @@ export const asyncRouterMap = [
                 meta: { title: '容器列表', keepAlive: false }
               },
               {
+                path: '/resources/containers/deploy',
+                name: 'ContainerDeploy',
+                component: () => import(/* webpackChunkName: "ContainerDeploy" */ '@/views/resources/containers/deploy'),
+                meta: { title: '容器部署', keepAlive: false }
+              },
+              {
                 path: '/resources/containers/:id',
                 name: 'ContainerDetails',
                 component: () => import(/* webpackChunkName: "ContainerDetails" */ '@/views/resources/containers/details'),
@@ -449,12 +455,6 @@ export const asyncRouterMap = [
                 name: 'ContainerStatistics',
                 component: () => import(/* webpackChunkName: "ContainerStatistics" */ '@/views/resources/containers/statistics'),
                 meta: { title: '容器监控统计', keepAlive: false }
-              },
-              {
-                path: '/resources/containers/deploy',
-                name: 'ContainerDeploy',
-                component: () => import(/* webpackChunkName: "ContainerDeploy" */ '@/views/resources/containers/deploy'),
-                meta: { title: '容器部署', keepAlive: false }
               }
             ]
           },
