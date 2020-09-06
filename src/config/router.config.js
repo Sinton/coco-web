@@ -607,9 +607,9 @@ export const asyncRouterMap = [
         meta: { title: '设置', icon: 'setting' },
         children: [
           {
-            path: '/setting/registrys',
-            name: 'Registrys',
-            component: () => import(/* webpackChunkName: "Registrys" */ '@/views/setting/registrys'),
+            path: '/setting/registries',
+            name: 'Registries',
+            component: () => import(/* webpackChunkName: "Registries" */ '@/views/setting/registries'),
             meta: { title: '镜像仓库', keepAlive: false }
           },
           {

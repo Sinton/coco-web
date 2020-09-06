@@ -9,7 +9,7 @@
   // import { invokeApi } from '@api/http'
 
   export default {
-    name: 'Registrys',
+    name: 'Registries',
     components: {
       PageView,
       STable,
