@@ -253,14 +253,12 @@
         }
         invokeApi('/image/remove', params).then(response => {
           if (response.code === 2000) {
-            this.$notification.success({ message: '提示', description: '删除镜像成功' })
+            this.$router.push('/resources/images')
           } else {
             this.$notification.warning({ message: '警告', description: '删除镜像失败' })
           }
         }).catch(error => {
           this.$notification.error({ message: '错误', description: error })
-        }).finally(() => {
-          this.$router.push('/resources/images')
         })
       },
       loadImageHistory() {

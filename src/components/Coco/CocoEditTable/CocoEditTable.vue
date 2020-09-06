@@ -1,38 +1,33 @@
 <template>
   <div>
-    <a-table
-      :columns="tableColumns"
-      :dataSource="tableData"
-      :pagination="false">
+    <a-table :columns="tableColumns"
+             :dataSource="tableData"
+             :pagination="false">
       <template v-for="(column, i) in tableColumns.map(columnItem => columnItem.dataIndex)" :slot="column" slot-scope="text, record">
         <template v-if="record.editable">
           <!-- 输入可编辑框 -->
-          <a-input
-            v-if="tableColumns[i].editType === 'input'"
-            :key="column"
-            :value="text"
-            :placeholder="`请输入${tableColumns[i].title}`"
-            style="margin: -5px 0"
-            @change="e => inputChanged(e.target.value, record.key, column)">
-          </a-input>
+          <a-input v-if="tableColumns[i].editType === 'input' && tableColumns[i] !== 'action'"
+                   :key="column"
+                   :value="text"
+                   :placeholder="`${tableColumns[i].title}`"
+                   style="margin: -5px 0"
+                   @change="e => inputChanged(e.target.value, record.key, column)"/>
           <!-- 下拉选项可编辑框 -->
-          <a-select
-            v-else-if="tableColumns[i].editType === 'select'"
-            :key="column"
-            :value="text"
-            :defaultValue="editorSelectItemDefault[column] || text"
-            @change="selectChanged">
-            <a-select-option
-              v-for="option in editorSelectItem[column]"
-              :key="option.value"
-              :value="option.value">
+          <a-select v-else-if="tableColumns[i].editType === 'select'"
+                    :key="column"
+                    :value="text"
+                    :default-value="editorSelectItemDefault[column] || text"
+                    @change="selectChanged">
+            <a-select-option v-for="option in editorSelectItem[column]"
+                             :key="option.value"
+                             :value="option.value">
               {{ option.text }}
             </a-select-option>
           </a-select>
         </template>
         <template v-else>{{ text }}</template>
       </template>
-      <template slot="operation" slot-scope="text, record">
+      <template slot="action" slot-scope="text, record">
         <template v-if="record.editable">
           <span v-if="record.isNew">
             <a-icon style="cursor: pointer" type="save" @click="saveEditorItem(record)">保存</a-icon>
@@ -60,7 +55,6 @@
 </template>
 
 <script>
-// import { invokeApi } from '@/api/apiBus'
 
   export default {
     name: 'CocoEditTable',

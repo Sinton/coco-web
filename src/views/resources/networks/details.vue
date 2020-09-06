@@ -8,7 +8,7 @@
       </detail-list-item>
     </detail-list>
     <template slot="headerContent">
-      <a-button icon="delete" type="link" @click="removeNetwork()">移除</a-button>
+      <a-button icon="delete" type="link" @click="removeNetwork">移除</a-button>
     </template>
 
     <a-card v-if="detailsOption.options.length > 0" :title="'网络配置项'" :bordered="false" style="margin-bottom: 20px;">
@@ -119,7 +119,12 @@
       removeNetwork() {
         invokeApi('/network/remove', { networkId: this.networkId }).then(response => {
           if (response.code === 2000) {
+            this.$router.push('/resources/networks')
+          } else {
+            this.$notification.warning({ message: '警告', description: '删除网络失败' })
           }
+        }).catch(error => {
+          this.$notification.error({ message: '错误', description: error })
         })
       },
       leaveNetwork(containerId) {
