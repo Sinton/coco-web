@@ -234,7 +234,7 @@
           this.imagesPullProgress = []
           const imageName = this.pullImageForm.getFieldsValue()['imageName']
           const params = {
-            imageName: imageName.endsWith('latest') ? imageName : `${imageName}:latest`,
+            imageName: imageName,
             registry: _.trim(this.pullImageForm.getFieldsValue()['registry'])
           }
           this.pulling = true
