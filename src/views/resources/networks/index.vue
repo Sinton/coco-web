@@ -3,7 +3,7 @@
     <a-card :title="'容器网络列表'" :bordered="false">
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['networksRef'].refresh()">刷新</a-button>
-        <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0">删除</a-button>
+        <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeNetwork">删除</a-button>
         <a-button type="primary" icon="plus">创建网络</a-button>
       </div>
       <s-table ref="networksRef"
@@ -119,16 +119,11 @@
         ],
         selectedRowKeys: [],
         selectedRows: [],
-
         // custom table alert & rowSelection
         options: {
-          alert: {
-            show: true,
-            clear: () => {
-              this.selectedRowKeys = []
-            }
-          },
+          alert: { show: true, clear: () => { this.selectedRowKeys = [] } },
           rowSelection: {
+            selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
             onChange: this.onSelectChange
           }
@@ -153,6 +148,28 @@
       }
     },
     methods: {
+      removeNetwork() {
+        this.selectedRows.forEach(item => {
+          const params = {
+            networkId: item.Id
+          }
+          invokeApi('/network/remove', params).then(response => {
+            if (response.code === 2000) {
+              this.selectedRows = []
+              this.selectedRowKeys = []
+              this.$refs['networksRef'].selectedRows = this.selectedRows
+              this.$refs['networksRef'].selectedRowKeys = this.selectedRowKeys
+              this.$notification.success({ message: '提示', description: response.data })
+            } else {
+              this.$notification.error({ message: '提示', description: response.data })
+            }
+          }).catch(() => {
+            this.$notification.error({ message: '错误', description: '请求接口异常' })
+          }).finally(() => {
+            this.$refs['networksRef'].refresh()
+          })
+        })
+      },
       loadNetworks(params) {
         return invokeApi('/network/list', { ...params, ...this.queryParam }).then(response => {
           if (response.code === 2000) {
