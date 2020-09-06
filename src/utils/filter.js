@@ -1,8 +1,5 @@
 import Vue from 'vue'
-import moment from 'moment'
-import 'moment/locale/zh-cn'
-import { convertSize } from './util'
-moment.locale('zh-cn')
+import { convertSize, dateFormat } from './util'
 
 Vue.filter('NumberFormat', (value) => {
   if (!value) {
@@ -12,16 +9,21 @@ Vue.filter('NumberFormat', (value) => {
   return value.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')
 })
 
-Vue.filter('core', (cpu) => {
-  return `${cpu / Math.pow(10, 9)}核`
+Vue.filter('core', (cpu, decorate = true, decorationSuffix = '核') => {
+  return `${cpu / Math.pow(10, 9)}${decorate ? decorationSuffix : ''}`
 })
 
-Vue.filter('size', (size, base = 1000) => {
-  return convertSize(size, base)
+Vue.filter('cpuUsageRate', (cpu, percentage = true) => {
+  const usageRate = cpu / Math.pow(10, 9)
+  return percentage ? usageRate * 100 : usageRate
 })
 
-Vue.filter('moment', (dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') => {
-  return moment(dataStr).format(pattern)
+Vue.filter('size', (size, unit = true, reverse = false, base = 1000) => {
+  return unit ? convertSize(size, unit, reverse, base) : Number.parseInt(convertSize(size, unit, reverse, base))
+})
+
+Vue.filter('moment', (dateStr, pattern = 'YYYY-MM-DD HH:mm:ss') => {
+  return dateFormat(dateStr, pattern)
 })
 
 Vue.filter('trimShaSum', (imageName) => {

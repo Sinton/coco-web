@@ -1,3 +1,7 @@
+import moment from 'moment'
+import 'moment/locale/zh-cn'
+moment.locale('zh-cn')
+
 export function timeFix() {
   const time = new Date()
   const hour = time.getHours()
@@ -5,7 +9,7 @@ export function timeFix() {
 }
 
 export function welcome () {
-  const arr = ['休息一会儿吧', '准备吃什么呢?', '要不要打一把 DOTA', '我猜你可能累了']
+  const arr = ['休息一会儿吧', '准备吃什么呢?', '我猜你可能累了']
   const index = Math.floor(Math.random() * arr.length)
   return arr[index]
 }
@@ -63,19 +67,49 @@ export function removeLoadingAnimate (id = '', timeout = 1500) {
  * 转换容量大小
  *
  * @param size
+ * @param unit
+ * @param reverse
  * @param base
  * @returns {string}
  */
-export function convertSize(size, base = 1000) {
-  if (size === 0) {
-    return size
+export function convertSize(size, unit = true, reverse = false, base = 1000) {
+  if (reverse) {
+    if (size.endsWith('B')) {
+      // 容量等级
+      let level = 0
+      if (size.endsWith('KB')) {
+        level = 1
+      } else if (size.endsWith('MB')) {
+        level = 2
+      } else if (size.endsWith('GB')) {
+        level = 3
+      }
+      return level > 0 ? size * Math.pow(base, level) : size
+    } else {
+      return size
+    }
+  } else {
+    if (size === 0) {
+      return `${size}B`
+    }
+    // 单位
+    const units = ['B', 'KB', 'MB', 'GB']
+    // 容量等级
+    const level = Math.floor(Math.log2(size) / Math.log2(base))
+    // 当前容量
+    const capacity = size / Math.pow(base, level)
+    // 四舍五入
+    const currSize = Math.round(capacity * 100) / 100
+    return unit ? `${currSize}${units[level]}` : currSize
   }
-  const label = ['B', 'KB', 'MB', 'GB']
-  // 容量等级
-  const level = Math.floor(Math.log2(size) / Math.log2(base))
-  // 当前容量
-  const capacity = size / Math.pow(base, level)
-  // 四舍五入
-  const currSize = Math.round(capacity * 100) / 100
-  return `${currSize}${label[level]}`
+}
+
+/**
+ * 时间格式化
+ *
+ * @param dateStr
+ * @param pattern
+ */
+export function dateFormat (dateStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
+  return moment(dateStr).format(pattern)
 }
