@@ -56,13 +56,20 @@
             <template v-else-if="item.prop === 'cmds'">
               <a-tag v-for="cmd in item.value" :key="cmd">{{ cmd }}</a-tag>
             </template>
-            <template v-else-if="item.prop === 'env'">
+            <template v-else-if="item.prop === 'envs'">
               <a-table :show-header="false"
                        :columns="kvColumns"
                        :dataSource="item.value"
                        :pagination="false"
                        :size="'small'"
                        style="width: 100%"/>
+            </template>
+            <template v-else-if="item.prop === 'labels'">
+              <coco-shield v-for="label in Object.keys(item.value)"
+                           :key="label"
+                           :label="label">
+                {{ item.value[label] }}
+              </coco-shield>
             </template>
             <template v-else>{{ item.value }}</template>
           </a-col>
@@ -148,6 +155,7 @@
   import { DetailList, CocoJsonViewer, CocoLogs } from '@/components'
   import { invokeApi } from '@api/http'
   import { common, containers } from '@/mixins'
+  import CocoShield from '@comp/Coco/CocoShield/CocoShield'
 
   const DetailListItem = DetailList.Item
 
@@ -157,6 +165,7 @@
       PageView,
       DetailList,
       DetailListItem,
+      CocoShield,
       CocoLogs,
       CocoJsonViewer
     },
@@ -366,33 +375,46 @@
         })
       },
       buildContainerDetails() {
-        this.detailsOption.details.push(
-          {
-            label: '镜像',
-            value: `${this.containerInspect['Config']['Image']}@${this.containerInspect['Image']}`,
-            prop: 'image'
-          },
-          {
+        this.detailsOption.details.push({
+          label: '镜像',
+          value: `${this.containerInspect['Config']['Image']}@${this.containerInspect['Image']}`,
+          prop: 'image'
+        })
+        if (!_.isEmpty(Object.values(this.containerInspect['NetworkSettings']['Ports']).filter(item => !_.isEmpty(item)))) {
+          this.detailsOption.details.push({
             label: '映射端口',
             value: this.convertPorts(this.containerInspect['NetworkSettings']['Ports']),
             prop: 'ports'
-          },
-          {
+          })
+        }
+        if (!_.isString(this.containerInspect['Config']['Cmd'])) {
+          this.detailsOption.details.push({
             label: '命令行',
             value: this.containerInspect['Config']['Cmd'],
             prop: 'cmds'
-          },
-          {
+          })
+        }
+        if (!_.isEmpty(this.containerInspect['Config']['Entrypoint'])) {
+          this.detailsOption.details.push({
             label: '启动入口',
             value: this.containerInspect['Config']['Entrypoint'],
             prop: 'entrypoint'
-          },
-          {
+          })
+        }
+        if (!_.isEmpty(this.containerInspect['Config']['Env'])) {
+          this.detailsOption.details.push({
             label: '环境变量',
             value: this.convertEnv(this.containerInspect['Config']['Env']),
-            prop: 'env'
-          }
-        )
+            prop: 'envs'
+          })
+        }
+        if (!_.isEmpty(this.containerInspect['Config']['Labels'])) {
+          this.detailsOption.details.push({
+            label: '标签',
+            value: this.containerInspect['Config']['Labels'],
+            prop: 'labels'
+          })
+        }
       }
     },
     computed: {
