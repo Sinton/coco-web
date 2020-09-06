@@ -8,13 +8,17 @@
                    placeholder="请输入容器名称"/>
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="容器镜像">
-          <a-input v-decorator="['image', {rules: [{ required: true, message: '请输入镜像', whitespace: true}]}]"
-                   :allow-clear="true"
-                   placeholder="请输入镜像">
-            <a-select slot="addonAfter" default-value="DockerHub" style="width: 120px" placeholder="请选择镜像Registry">
-              <a-select-option value="DockerHub">DockerHub</a-select-option>
-            </a-select>
-          </a-input>
+          <a-auto-complete v-decorator="['image', {rules: [{ required: true, message: '请输入镜像', whitespace: true}]}]"
+                           :data-source="isEmpty(this.containerSpecForm.getFieldValue('image')) ? [] : availableImages"
+                           :allow-clear="true"
+                           :filter-option="filterImages"
+                           placeholder="请输入镜像">
+          </a-auto-complete>
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout" label="镜像仓库">
+          <a-select v-decorator="['registry', {initialValue: 'DockerHub'}]" placeholder="请选择镜像Registry">
+            <a-select-option value="DockerHub">DockerHub</a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="总是拉取镜像">
           <a-switch checkedChildren="开" unCheckedChildren="关" style="margin-right: 5px"/>
@@ -24,14 +28,14 @@
           </a-tooltip>
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="自动删除">
-          <a-switch v-decorator="['autoRemove']" checkedChildren="开" unCheckedChildren="关" style="margin-right: 5px"/>
+          <a-switch v-decorator="['autoRemove', {initialValue: false}]" checkedChildren="开" unCheckedChildren="关" style="margin-right: 5px"/>
           <a-tooltip placement="right">
             <a-icon type="question-circle"/>
             <template slot="title">启用后，系统会在容器退出或者结束时自动删除该容器。当您只想一次性使用容器时，可以选择开启</template>
           </a-tooltip>
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="映射所有暴露端口">
-          <a-switch v-decorator="['publishAllPorts']" checkedChildren="开" unCheckedChildren="关" style="margin-right: 5px"/>
+          <a-switch v-decorator="['publishAllPorts', {initialValue: false}]" checkedChildren="开" unCheckedChildren="关" style="margin-right: 5px"/>
           <a-tooltip placement="right">
             <a-icon type="question-circle"/>
             <template slot="title">启用后，系统将会镜像Dockerfile中定义的每个端口会映射到宿主机的随机端口上</template>
@@ -41,7 +45,7 @@
       <!-- 容器基础配置 -->
       <coco-topic>基础配置</coco-topic>
       <a-divider/>
-      <a-tabs defaultActiveKey="ports">
+      <a-tabs default-activeKey="ports">
         <a-tab-pane tab="映射端口" key="ports">
           <container-ports :data="portData"/>
         </a-tab-pane>
@@ -55,7 +59,7 @@
       <!-- 容器高级配置 -->
       <coco-topic style="margin-top: 20px">高级配置</coco-topic>
       <a-divider/>
-      <a-tabs defaultActiveKey="command">
+      <a-tabs default-activeKey="command">
         <a-tab-pane tab="命令" key="command">
           <container-command :form-item-layout="formItemLayout"/>
         </a-tab-pane>
@@ -75,10 +79,7 @@
       </a-tabs>
     </a-card>
     <div class="fixed-block">
-      <a-button type="primary"
-                :disabled="deployable()"
-                :loading="deploying"
-                @click="deployContainer">
+      <a-button type="primary" :disabled="deployable()" :loading="deploying" @click="deployContainer">
         {{ deployingText }}
       </a-button>
     </div>
@@ -149,6 +150,7 @@
           memoryLimit: '',
           cpuLimit: ''
         },
+        availableImages: [],
         deploying: false,
         deployingText: '部署'
       }
@@ -163,11 +165,24 @@
           image: this.containerSpecForm.getFieldValue('image'),
           autoRemove: this.containerSpecForm.getFieldValue('autoRemove'),
           publishAllPorts: this.containerSpecForm.getFieldValue('publishAllPorts'),
-          // container <--> host
-          portMapping: {}
+          ports: {},
+          envs: {},
+          labels: {}
         }
         this.portData.forEach(item => {
-          params['portMapping'][`${item['containerPort']}/${item['protocol']}`] = item['hostPort']
+          if (!_.isEmpty(item['containerPort']) || _.isNumber(item['containerPort'])) {
+            params['ports'][`${item['containerPort']}/${item['protocol']}`] = item['hostPort']
+          }
+        })
+        this.envData.forEach(item => {
+          if (!_.isEmpty(item['name'])) {
+            params['envs'][item['name']] = item['value']
+          }
+        })
+        this.labelData.forEach(item => {
+          if (!_.isEmpty(item['name'])) {
+            params['labels'][item['name']] = item['value']
+          }
         })
         this.deploying = true
         this.deployingText = '部署中'
@@ -178,22 +193,34 @@
           } else {
             this.$notification.warning({ message: '警告', description: response.data })
           }
-        }).catch(() => {
+        }).finally(() => {
           this.deploying = false
           this.deployingText = '部署'
         })
       },
       loadImages() {
-        invokeApi('/image/list', {}).then(response => {
+        const params = { filter: { all: true, dangling: false } }
+        invokeApi('/image/list', params).then(response => {
           if (response.code === 2000) {
-            console.log(response.data)
+            response.data.data.forEach(image => {
+              this.availableImages = _.union(this.availableImages, image['RepoTags'])
+            })
           } else {
             this.$notification.warning({ message: '警告', description: response.data })
           }
         }).catch(error => {
           this.$notification.error({ message: '错误', description: error })
         })
+      },
+      filterImages(input, option) {
+        return option.componentOptions.children[0].text.includes(input)
+      },
+      isEmpty(text) {
+        return _.isEmpty(text)
       }
+    },
+    mounted() {
+      this.loadImages()
     }
   }
 </script>
