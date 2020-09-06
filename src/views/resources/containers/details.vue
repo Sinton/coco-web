@@ -24,7 +24,12 @@
         <a-button icon="sync" size="small" @click.stop="changeContainerStatus('restart')">重启</a-button>
         <a-button icon="pause" size="small" @click.stop="changeContainerStatus('pause')">暂停</a-button>
         <a-button icon="thunderbolt" size="small" @click.stop="changeContainerStatus('upPause')">恢复</a-button>
-        <a-button icon="delete" size="small" type="danger" @click.stop="removeContainer">删除</a-button>
+        <a-popconfirm @confirm="removeContainer">
+          <template slot="title">
+            删除与容器关联的存储卷 <a-switch v-model="withVolumes" checkedChildren="开" unCheckedChildren="关"/>
+          </template>
+          <a-button type="danger" icon="delete" size="small">删除</a-button>
+        </a-popconfirm>
       </a-button-group>
     </template>
 
@@ -34,7 +39,8 @@
           <a-col span="2">{{ item.label }}</a-col>
           <a-col span="22">
             <template v-if="item.prop === 'image'">
-              <router-link :to="{ path: `/resources/images/${item.value.split('@sha256:').slice(-1).join(',')}`, params: { imageId: item.value.split('@sha256:').slice(-1).join(',') } }">
+              <router-link :to="{ path: `/resources/images/${item.value.split('@sha256:').slice(-1).join(',')}`,
+                                  params: { imageId: item.value.split('@sha256:').slice(-1).join(',') } }">
                 {{ item.value }}
               </router-link>
             </template>
@@ -157,6 +163,7 @@
     mixins: [common.base, common.logs, containers.details, containers.inspect],
     data() {
       return {
+        withVolumes: false,
         visibleInspect: false,
         containerInspect: null,
         containerLogs: null,
@@ -185,7 +192,8 @@
       // 删除容器
       removeContainer() {
         const params = {
-          containerId: this.containerId
+          containerId: this.containerId,
+          withVolumes: this.withVolumes
         }
         invokeApi('/container/remove', params).then(response => {
           if (response.code === 2000) {

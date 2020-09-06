@@ -3,8 +3,13 @@
     <a-card :bordered="false">
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['containersRef'].refresh()">刷新</a-button>
-        <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeContainer">删除</a-button>
-        <a-button type="primary" icon="plus" @click="() => this.$router.push({ name: 'ContainerDeploy' })">部署新容器</a-button>
+        <a-popconfirm :disabled="!selectedRows.length > 0" @confirm="removeContainer">
+          <template slot="title">
+            删除与容器关联的存储卷 <a-switch v-model="withVolumes" checkedChildren="开" unCheckedChildren="关"/>
+          </template>
+          <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0">删除</a-button>
+        </a-popconfirm>
+        <a-button type="primary" icon="plus" @click="() => this.$router.push({ path: 'containers/deploy' })">部署新容器</a-button>
       </div>
 
       <s-table ref="containersRef"
@@ -223,6 +228,7 @@
             onChange: this.onSelectChange
           }
         },
+        withVolumes: false,
         visibleInspect: false,
         containerInspect: {},
         visibleLogs: false,
@@ -372,7 +378,8 @@
       removeContainer() {
         this.selectedRows.forEach(item => {
           const params = {
-            containerId: item.Id
+            containerId: item.Id,
+            withVolumes: this.withVolumes
           }
           invokeApi('/container/remove', params).then(response => {
             if (response.code === 2000) {
