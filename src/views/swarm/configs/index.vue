@@ -34,17 +34,55 @@
           {{ text | moment }}
         </template>
         <template slot="action" slot-scope="text, record">
-          <a>克隆</a>
+          <a-popconfirm ok-text="克隆"
+                        cancel-text="取消"
+                        @confirm="cloneConfig(record)">
+            <template slot="title">
+              <div>是否要克隆配置项?</div>
+              <a-form-item v-bind="{labelCol: {xs: { span: 24 }, sm: { span: 6 }},
+                                    wrapperCol: {xs: { span: 24 }, sm: { span: 18 }}}"
+                           style="margin-bottom: 0"
+                           label="新名称">
+                <a-input :size="'small'" placeholder="请输入配置项名称"></a-input>
+              </a-form-item>
+            </template>
+            <span style="cursor: pointer; color: #40a9ff">克隆</span>
+          </a-popconfirm>
         </template>
       </s-table>
     </a-card>
     <a-drawer :visible="configContentVisible"
+              :title="'配置项内容'"
               :width="650"
               :placement="'right'"
               :bodyStyle="{padding: 0}"
               :mask-closable="false"
               @close="() => this.configContentVisible = false">
+      <a-form-item v-bind="{labelCol: {xs: { span: 24 }, sm: { span: 3 }},
+                            wrapperCol: {xs: { span: 24 }, sm: { span: 20 }}}"
+                   label="配置项名称">
+        <a-input :size="'small'" placeholder="请输入配置项名称"></a-input>
+      </a-form-item>
       <codemirror v-model="configContent" :options="cmOptions"/>
+      <a-form-item v-for="(k, index) in form.getFieldValue('keys')"
+                   :key="k"
+                   v-bind="index === 0 ? formItemLayout : formItemLayoutWithOutLabel"
+                   :label="index === 0 ? '标签' : ''"
+                   :required="false">
+        <a-input v-decorator="[`names[${k}]`]"
+                 placeholder="passenger name"
+                 style="width: 60%; margin-right: 8px"/>
+        <a-icon v-if="form.getFieldValue('keys').length > 1"
+                class="dynamic-delete-button"
+                type="minus-circle-o"
+                :disabled="form.getFieldValue('keys').length === 1"
+                @click="() => remove(k)"/>
+      </a-form-item>
+      <a-form-item v-bind="formItemLayoutWithOutLabel">
+        <a-button type="dashed" icon="plus" style="width: 60%" @click="add">
+          {{ addText }}
+        </a-button>
+      </a-form-item>
       <div class="fixed-block">
         <a-button type="primary" @click="createConfig" :loading="creating">{{ creatingText }}</a-button>
       </div>
@@ -61,6 +99,7 @@
   import { STable } from '@/components'
   import { invokeApi } from '@api/http'
 
+  let id = 0
   export default {
     name: 'ConfigsList',
     components: {
@@ -70,6 +109,22 @@
     },
     data() {
       return {
+        formItemLayout: {
+          labelCol: {
+            xs: { span: 24 },
+            sm: { span: 4 }
+          },
+          wrapperCol: {
+            xs: { span: 24 },
+            sm: { span: 20 }
+          }
+        },
+        formItemLayoutWithOutLabel: {
+          wrapperCol: {
+            xs: { span: 24, offset: 0 },
+            sm: { span: 20, offset: 4 }
+          }
+        },
         queryParam: {},
         columns: [
           {
@@ -142,13 +197,28 @@
           }
         })
       },
+      cloneConfig(configId) {
+        const params = {
+          configId: configId
+        }
+        invokeApi('/config/clone', params).then(response => {
+          if (response.code === 2000) {
+          } else {
+            this.$notification.error({ message: '标题', description: '加载数据失败' })
+          }
+        }).catch(() => {
+          this.$notification.error({ message: '错误', description: '请求接口异常' })
+        })
+      },
       loadConfigs(params) {
         return invokeApi('/config/list', { ...params, ...this.queryParam }).then(response => {
           if (response.code === 2000) {
             return response.data
           } else {
-            this.$notification.error({ message: '标题', description: '加载数据失败' })
+            this.$notification.warning({ message: '标题', description: '加载数据失败' })
           }
+        }).catch(() => {
+          this.$notification.error({ message: '错误', description: '请求接口异常' })
         })
       },
       createConfig() {
@@ -197,7 +267,35 @@
       onSelectChange(selectedRowKeys, selectedRows) {
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
+      },
+      remove(k) {
+        const { form } = this
+        // can use data-binding to get
+        const keys = form.getFieldValue('keys')
+        // We need at least one passenger
+        if (keys.length === 1) {
+          return
+        }
+        // can use data-binding to set
+        form.setFieldsValue({
+          keys: keys.filter(key => key !== k)
+        })
+      },
+      add() {
+        const { form } = this
+        // can use data-binding to get
+        const keys = form.getFieldValue('keys')
+        const nextKeys = keys.concat(id++)
+        // can use data-binding to set
+        // important! notify form to detect changes
+        form.setFieldsValue({
+          keys: nextKeys
+        })
       }
+    },
+    beforeCreate() {
+      this.form = this.$form.createForm(this, { name: 'dynamic_form_item' })
+      this.form.getFieldDecorator('keys', { initialValue: [], preserve: true })
     }
   }
 </script>
