@@ -2,10 +2,11 @@
   <page-view>
     <a-card :title="'应用栈列表'" :bordered="false">
       <div class="table-operator">
+        <a-button icon="reload" @click="() => $refs['stacksRef'].refresh()">刷新</a-button>
         <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0">删除</a-button>
         <a-button type="primary" icon="plus">创建应用栈</a-button>
       </div>
-      <s-table ref="table"
+      <s-table ref="stacksRef"
                rowKey="key"
                size="middle"
                :columns="stackOption.columns"
@@ -34,8 +35,6 @@
     data() {
       return {
         queryParam: [],
-        selectedRowKeys: [],
-        selectedRows: [],
         stackOption: {
           columns: [
             {
@@ -61,16 +60,13 @@
           ],
           data: null
         },
-
+        selectedRowKeys: [],
+        selectedRows: [],
         // custom table alert & rowSelection
         options: {
-          alert: {
-            show: true,
-            clear: () => {
-              this.selectedRowKeys = []
-            }
-          },
+          alert: { show: true, clear: () => { this.selectedRowKeys = [] } },
           rowSelection: {
+            selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
             onChange: this.onSelectChange
           }

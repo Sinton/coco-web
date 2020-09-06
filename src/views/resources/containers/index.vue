@@ -36,7 +36,8 @@
         </template>
         <!-- 镜像名称 -->
         <template slot="Image" slot-scope="text, record">
-          <router-link :to="{ path: `images/${record['ImageID'].replace('sha256:', '')}`, params: { imageId: record['ImageID'].replace('sha256:', '') } }">
+          <router-link :to="{ path: `images/${record['ImageID'].replace('sha256:', '')}`,
+                              params: { imageId: record['ImageID'].replace('sha256:', '') } }">
             {{ text | trimShaSum }}
           </router-link>
         </template>
@@ -215,13 +216,9 @@
 
         // custom table alert & rowSelection
         options: {
-          alert: {
-            show: true,
-            clear: () => {
-              this.selectedRowKeys = []
-            }
-          },
+          alert: { show: true, clear: () => { this.selectedRowKeys = [] } },
           rowSelection: {
+            selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
             onChange: this.onSelectChange
           }

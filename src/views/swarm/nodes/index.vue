@@ -1,16 +1,13 @@
 <template>
   <page-view>
-    <a-card :title="'集群概要'" :bordered="false" style="margin-bottom: 25px">
-      <a-list size="small" :dataSource="swarmOption.details">
-        <a-list-item slot="renderItem" slot-scope="item">
-          <a-col span="2">{{ item.label }}</a-col>
-          <a-col span="22">{{ item.value }}</a-col>
-        </a-list-item>
-      </a-list>
-      <div class="table-operator">
-        <a-button type="link" icon="codepen">集群可视化</a-button>
-      </div>
-    </a-card>
+    <detail-list slot="headerContent" size="small" :col="2" class="detail-layout">
+      <detail-list-item v-for="(item, index) in swarmOption.details"
+                        :key="index"
+                        :term="item.label">
+        {{ item.value }}
+      </detail-list-item>
+      <a-button type="link" icon="codepen">集群可视化</a-button>
+    </detail-list>
     <a-card :title="'集群节点列表'" :bordered="false">
       <div slot="extra">
         <a-button-group>
@@ -31,7 +28,13 @@
                :alert="options.alert"
                :rowSelection="options.rowSelection">
         <template slot="Hostname" slot-scope="text, record">
-          {{ record['Description']['Hostname'] }}
+          <router-link :to="{ path: `nodes/${record['ID']}`, params: { nodeId: text } }">
+            {{ record['Description']['Hostname'] }}
+          </router-link>
+          <a-tooltip placement="right">
+            <a-icon type="info-circle"/>
+            <template slot="title">节点ID: {{ record['ID'] }}</template>
+          </a-tooltip>
         </template>
         <!-- 集群节点状态 -->
         <template slot="Status" slot-scope="text">
@@ -59,12 +62,6 @@
         <template slot="Addr" slot-scope="text, record">
           {{ record['Status']['Addr'] }}
         </template>
-        <!-- 操作列 -->
-        <template slot="action" slot-scope="text, record">
-          <a v-if="record['Spec']['Role'] !== 'manager'">离开集群</a>
-          <a-divider v-if="record['Spec']['Role'] !== 'manager'" type="vertical"/>
-          <a v-if="record['Spec']['Role'] === 'manager'">释放集群</a>
-        </template>
       </s-table>
     </a-card>
   </page-view>
@@ -72,14 +69,19 @@
 
 <script>
   import { PageView } from '@/layouts'
-  import { STable } from '@/components'
+  import { STable, DetailList } from '@/components'
+  import { convertSize } from '@/utils/util'
   import { invokeApi } from '@api/http'
+
+  const DetailListItem = DetailList.Item
 
   export default {
     name: 'NodesList',
     components: {
       PageView,
-      STable
+      STable,
+      DetailList,
+      DetailListItem
     },
     data() {
       return {
@@ -146,13 +148,6 @@
             key: 'CreatedAt',
             sorter: true,
             scopedSlots: { customRender: 'CreatedAt' }
-          },
-          {
-            title: '操作',
-            dataIndex: 'action',
-            key: 'action',
-            width: 180,
-            scopedSlots: { customRender: 'action' }
           }
         ],
         selectedRowKeys: [],
@@ -160,13 +155,9 @@
 
         // custom table alert & rowSelection
         options: {
-          alert: {
-            show: true,
-            clear: () => {
-              this.selectedRowKeys = []
-            }
-          },
+          alert: { show: true, clear: () => { this.selectedRowKeys = [] } },
           rowSelection: {
+            selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
             onChange: this.onSelectChange
           }
@@ -210,10 +201,7 @@
           if (response.code === 2000) {
             this.version = response.data
             console.log(this.version)
-            this.swarmOption.details.push({
-              label: 'Api版本',
-              value: this.version['ApiVersion']
-            })
+            this.swarmOption.details.push({ label: 'Api版本', value: this.version['ApiVersion'] })
           } else {
             this.globalNotification('error', '标题', '获取集群版本信息失败')
           }
@@ -222,6 +210,9 @@
           if (response.code === 2000) {
             this.info = response.data
             console.log(this.info)
+            this.swarmOption.details.push({ label: '集群节点数', value: this.info['Swarm']['Nodes'] })
+            this.swarmOption.details.push({ label: '集群CPU总核数', value: this.info['NCPU'] })
+            this.swarmOption.details.push({ label: '集群内存总大小', value: convertSize(this.info['MemTotal'], true, false, 1024) })
           } else {
             this.globalNotification('error', '标题', '获取集群详细信息失败')
           }
