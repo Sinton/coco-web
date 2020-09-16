@@ -33,7 +33,8 @@
           { prop: 'Cmd', tips: '启动容器要执行的命令', label: '命令', value: this.data['Command'] || '' },
           { prop: 'Args', tips: '往容器内传递的命令参数', label: '命令参数', value: this.data['Args'] || '' },
           { prop: 'User', tips: '容器用户/UID', label: '权限用户', value: this.data['User'] || '' },
-          { prop: 'Dir', tips: '容器内的工作目录', label: '工作目录', value: this.data['Dir'] || '' }
+          { prop: 'Dir', tips: '容器内的工作目录', label: '工作目录', value: this.data['Dir'] || '' },
+          { prop: 'StopGracePeriod', tips: '在强制停止/杀死容器之前等待的时间（默认为无）', label: '停止宽限期', value: this.data['StopGracePeriod'] || '' }
         )
       }
     },
@@ -42,9 +43,8 @@
         deep: true,
         immediate: true,
         handler() {
-          if (Object.keys(this.data).length > 0) {
-            this.renderData()
-          }
+          this.containerSpec = []
+          this.renderData()
         }
       }
     }
