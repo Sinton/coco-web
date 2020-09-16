@@ -45,7 +45,7 @@
     <service-resources :data="resources"/>
     <service-placement-constraints :data="placementConstraints"/>
     <service-restart-policy :data="restartPolicy"/>
-    <service-update-config/>
+    <service-update-config :data="updateConfig"/>
     <service-service-labels :data="serviceLabels"/>
     <service-configs :data="configs"/>
     <service-secrets :data="secrets"/>
@@ -104,16 +104,17 @@
     data() {
       return {
         details: [],
-        containerSpec: [],
+        containerSpec: {},
         envs: [],
-        containerLabels: [],
+        containerLabels: {},
         mounts: [],
         networks: [],
         ports: [],
         resources: {},
         placementConstraints: [],
         restartPolicy: {},
-        serviceLabels: [],
+        updateConfig: {},
+        serviceLabels: {},
         configs: [],
         secrets: [],
         serviceInspect: {},
@@ -147,18 +148,12 @@
             // 环境变量
             response.data['Spec']['TaskTemplate']['ContainerSpec']['Env'].forEach(item => {
               this.envs.push({
-                Label: item.split('=')[0],
-                Value: item.split('=')[1]
+                name: item.split('=')[0],
+                value: item.split('=')[1]
               })
             })
             // 容器标签
-            let tmp = response.data['Spec']['TaskTemplate']['ContainerSpec']['Labels']
-            Object.keys(tmp).forEach(key => {
-              this.containerLabels.push({
-                Label: key,
-                Value: tmp[key]
-              })
-            })
+            this.containerLabels = response.data['Spec']['TaskTemplate']['ContainerSpec']['Labels']
             // 存储卷
             this.mounts = response.data['Spec']['TaskTemplate']['ContainerSpec']['Mounts']
             // 网络
@@ -168,13 +163,7 @@
             // 资源限制与预留
             this.resources = response.data['Spec']['TaskTemplate']['Resources']
             // 约束条件
-            response.data['Spec']['TaskTemplate']['Placement']['Constraints'].forEach(item => {
-              this.placementConstraints.push({
-                Name: item.split(' ')[0],
-                Operator: item.split(' ')[1],
-                Value: item.split(' ')[2]
-              })
-            })
+            this.placementConstraints = response.data['Spec']['TaskTemplate']['Placement']['Constraints']
             // 重启策略
             this.restartPolicy = response.data['Spec']['TaskTemplate']['RestartPolicy']
             if (this.restartPolicy === null) {
@@ -185,14 +174,17 @@
                 RestartWindow: 0
               }
             }
+            // 更新配置
+            this.updateConfig = response.data['Spec']['UpdateConfig']
+            if (this.updateConfig === null) {
+              this.updateConfig = {
+                Delay: 0,
+                FailureAction: 'pause',
+                Parallelism: 1
+              }
+            }
             // 服务标签
-            tmp = response.data['Spec']['Labels']
-            Object.keys(tmp).forEach(key => {
-              this.serviceLabels.push({
-                Label: key,
-                Value: tmp[key]
-              })
-            })
+            this.serviceLabels = response.data['Spec']['Labels']
             // 配置项
             this.configs = response.data['Spec']['TaskTemplate']['ContainerSpec']['Configs']
             // 加密配置项
