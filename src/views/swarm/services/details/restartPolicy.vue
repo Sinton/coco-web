@@ -91,6 +91,7 @@
         immediate: true,
         handler() {
           if (Object.keys(this.data).length > 0) {
+            this.restartPolicy = []
             this.renderData()
           }
         }
