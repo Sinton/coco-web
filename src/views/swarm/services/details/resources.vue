@@ -58,32 +58,38 @@
     },
     methods: {
       renderData() {
-        this.resources.push(
-          {
-            prop: 'memoryReservations',
-            tips: '节点上可用于运行服务调度任务的最小内存(设置为0则表示不限制)',
-            label: '内存资源预留 (MB)',
-            value: convertSize(this.data['Reservations']['MemoryBytes'], false, false, 1024)
-          },
-          {
-            prop: 'memoryLimits',
-            tips: '每个调度任务可用的最大内存(设置为0则表示不限制)',
-            label: '内存资源限制 (MB)',
-            value: convertSize(this.data['Limits']['MemoryBytes'], false, false, 1024)
-          },
-          {
-            prop: 'cpuReservations',
-            tips: '节点上可用于运行服务调度任务的最小CPU使用率',
-            label: 'CPU资源预留',
-            value: this.data['Reservations']['NanoCPUs'] / Math.pow(10, 9) * 100
-          },
-          {
-            prop: 'cpuLimits',
-            tips: '每个调度任务可用的最大CPU使用率',
-            label: 'CPU资源限制',
-            value: this.data['Limits']['NanoCPUs'] / Math.pow(10, 9) * 100
-          }
-        )
+        if (this.data['Reservations'] !== null) {
+          this.resources.push(
+            {
+              prop: 'memoryReservations',
+              tips: '节点上可用于运行服务调度任务的最小内存(设置为0则表示不限制)',
+              label: '内存资源预留 (MB)',
+              value: convertSize(this.data['Reservations']['MemoryBytes'], false, false, 1024)
+            },
+            {
+              prop: 'cpuReservations',
+              tips: '节点上可用于运行服务调度任务的最小CPU使用率',
+              label: 'CPU资源预留',
+              value: this.data['Reservations']['NanoCPUs'] / Math.pow(10, 9) * 100
+            }
+          )
+        }
+        if (this.data['Limits'] !== null) {
+          this.resources.push(
+            {
+              prop: 'memoryLimits',
+              tips: '每个调度任务可用的最大内存(设置为0则表示不限制)',
+              label: '内存资源限制 (MB)',
+              value: convertSize(this.data['Limits']['MemoryBytes'], false, false, 1024)
+            },
+            {
+              prop: 'cpuLimits',
+              tips: '每个调度任务可用的最大CPU使用率',
+              label: 'CPU资源限制',
+              value: this.data['Limits']['NanoCPUs'] / Math.pow(10, 9) * 100
+            }
+          )
+        }
       }
     },
     watch: {
