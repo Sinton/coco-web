@@ -28,7 +28,7 @@
           </a-select>
           <a-input v-else-if="column.dataIndex === 'source' && record['editor'].volumeType === 'bind'"
                    v-model="record['editor'].source"
-                   placeholder="请输入映射路径"
+                   placeholder="请输入宿主机挂载点"
                    style="margin: -5px 0; width: 100%;"/>
           <!-- 读写权限 -->
           <a-switch v-else-if="column.dataIndex === 'readOnly'"
@@ -38,7 +38,7 @@
           </a-switch>
           <a-input v-else
                    v-model="record['editor'].containerPath"
-                   placeholder="请输入容器路径"
+                   placeholder="请输入容器挂载点"
                    style="margin: -5px 0; width: 100%;"/>
         </template>
         <template v-else>
@@ -101,7 +101,7 @@
             width: 130
           },
           {
-            title: '映射主机挂载点 / 存储卷名称',
+            title: '存储卷名称 / 宿主机挂载点',
             dataIndex: 'source',
             scopedSlots: { customRender: 'source' },
             width: '100%'
@@ -125,9 +125,7 @@
             width: 120
           }
         ],
-        volumeType: [
-          { text: '路径映射', value: 'bind' }, { text: '存储卷', value: 'volume' }
-        ],
+        volumeType: [{ text: '路径映射', value: 'bind' }, { text: '存储卷', value: 'volume' }],
         availableVolumes: []
       }
     },
@@ -135,12 +133,12 @@
       append() {
         const record = { volumeType: 'bind', readOnly: false }
         record['editor'] = _.cloneDeep(record)
-        record.editable = true
+        record['editable'] = true
         this.data.push(record)
       },
       save(record) {
         record = Object.assign(record, record['editor'])
-        record.editable = false
+        record['editable'] = false
       },
       remove(record) {
         const index = this.data.indexOf(record)
