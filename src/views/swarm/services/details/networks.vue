@@ -3,7 +3,13 @@
     <template slot="title"><a-icon type="bars"/> 网络</template>
     <a-table :columns="columns"
              :dataSource="data"
-             :pagination="false"/>
+             :pagination="false">
+      <template slot="NetworkID" slot-scope="text">
+        <router-link :to="{ path: `/resources/networks/${text}`, params: {networkId: text} }">
+          {{ text }}
+        </router-link>
+      </template>
+    </a-table>
   </a-card>
 </template>
 
