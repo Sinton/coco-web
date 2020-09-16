@@ -146,12 +146,7 @@
             // 容器规格
             this.containerSpec = response.data['Spec']['TaskTemplate']['ContainerSpec']
             // 环境变量
-            response.data['Spec']['TaskTemplate']['ContainerSpec']['Env'].forEach(item => {
-              this.envs.push({
-                name: item.split('=')[0],
-                value: item.split('=')[1]
-              })
-            })
+            this.envs = response.data['Spec']['TaskTemplate']['ContainerSpec']['Env']
             // 容器标签
             this.containerLabels = response.data['Spec']['TaskTemplate']['ContainerSpec']['Labels']
             // 存储卷
