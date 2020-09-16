@@ -61,14 +61,14 @@
       return {
         columns: [
           {
+            title: '宿主机映射端口',
+            dataIndex: 'hostPort',
+            scopedSlots: { customRender: 'hostPort' }
+          },
+          {
             title: '容器端口',
             dataIndex: 'containerPort',
             scopedSlots: { customRender: 'containerPort' }
-          },
-          {
-            title: '映射主机端口',
-            dataIndex: 'hostPort',
-            scopedSlots: { customRender: 'hostPort' }
           },
           {
             title: '协议',
@@ -89,15 +89,12 @@
       append() {
         const record = { protocol: 'tcp' }
         record['editor'] = _.cloneDeep(record)
-        record.editable = true
+        record['editable'] = true
         this.data.push(record)
-      },
-      handleChange(value, column, record) {
-        record[column.dataIndex] = value
       },
       save(record) {
         record = Object.assign(record, record['editor'])
-        record.editable = false
+        record['editable'] = false
       },
       remove(record) {
         const index = this.data.indexOf(record)
