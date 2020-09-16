@@ -33,7 +33,8 @@
       </a-button-group>
     </template>
 
-    <a-card :title="'容器详情'" :bordered="false" style="margin-bottom: 20px;">
+    <a-card :bordered="false" style="margin-bottom: 20px;">
+      <template slot="title"><a-icon type="bars"/> 容器详情</template>
       <a-list size="small" :dataSource="detailsOption.details">
         <a-list-item slot="renderItem" slot-scope="item">
           <a-col span="2">{{ item.label }}</a-col>
@@ -77,7 +78,8 @@
       </a-list>
     </a-card>
 
-    <a-card :title="'挂载卷'" :bordered="false" style="margin-bottom: 20px;" class="compact">
+    <a-card :bordered="false" style="margin-bottom: 20px;" class="compact">
+      <template slot="title"><a-icon type="bars"/> 存储卷</template>
       <a-table :columns="volumesOption.columns"
                :dataSource="volumesOption.data"
                :pagination="false">
@@ -104,7 +106,8 @@
       </a-table>
     </a-card>
 
-    <a-card :title="'连接网络'" :bordered="false" style="margin-bottom: 20px;" class="compact">
+    <a-card :bordered="false" style="margin-bottom: 20px;" class="compact">
+      <template slot="title"><a-icon type="bars"/> 连接网络</template>
       <template slot="extra">
         <a-select placeholder="请选择要加入的网络"
                   size="small"

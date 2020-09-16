@@ -8,14 +8,14 @@ export default {
       volumesOption: {
         columns: [
           {
-            title: '卷名称/宿主机映射路径',
+            title: '存储卷名称 / 宿主机挂载点',
             dataIndex: 'Source',
             sorter: true,
             scopedSlots: { customRender: 'Source' },
             ellipsis: true
           },
           {
-            title: '容器路径',
+            title: '容器挂载点',
             dataIndex: 'Destination',
             sorter: true,
             scopedSlots: { customRender: 'Destination' },
