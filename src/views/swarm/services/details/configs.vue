@@ -3,16 +3,18 @@
     <template slot="title"><a-icon type="bars"/> 配置项</template>
     <div style="display: inline-flex; margin: 10px;">
       <div style="margin-right: 5px; width: 90px;">添加配置项：</div>
-      <a-select size="small" mode="tags" style="width: 200px; margin-right: 5px" placeholder="请选择配置项">
-        <a-select-option v-for="i in 25" :key="(i + 9).toString(36) + i">
-          {{ (i + 9).toString(36) + i }}
+      <a-select size="small" style="width: 200px; margin-right: 5px" placeholder="请选择配置项">
+        <a-select-option v-for="config in availableConfigs"
+                         :key="config['ID']">
+          {{ config['Name'] }}
         </a-select-option>
       </a-select>
-      <a-button icon="plus" size="small">添加配置项</a-button>
+      <a-button icon="plus" size="small" @click="append">添加配置项</a-button>
     </div>
     <a-table :columns="columns"
              :dataSource="data"
-             :pagination="false">
+             :pagination="false"
+             :scroll="{y: 200}">
       <template slot="Name" slot-scope="text, record">
         <router-link :to="{ path: `/swarm/configs` }">
           {{ record['ConfigName'] }}
@@ -23,7 +25,7 @@
         </a-tooltip>
       </template>
       <template slot="Path" slot-scope="text, record">
-        {{ record['File']['Name'] }}
+        <a-input v-model="record['File']['Name']"/>
       </template>
       <template slot="UID" slot-scope="text, record">
         {{ record['File']['UID'] }}
@@ -35,13 +37,28 @@
         {{ record['File']['Mode'] }}
       </template>
       <template slot="action" slot-scope="text, record">
-        <a-button icon="minus-circle" type="danger" size="small">移除</a-button>
+        <a-button icon="minus-circle" type="danger" size="small" @click="remove(record)">移除</a-button>
       </template>
+      <div slot="footer" style="text-align: right;">
+        <a style="float:left; margin-bottom: 20px">
+          <a-button-group>
+            <a-button type="primary" icon="check" size="small" :disabled="!changed" @click="apply">应用变更</a-button>
+            <a-dropdown :disabled="!changed">
+              <a-button type="default" icon="down" size="small"/>
+              <a-menu slot="overlay">
+                <a-menu-item @click="reset">重置变更</a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </a-button-group>
+        </a>
+      </div>
     </a-table>
   </a-card>
 </template>
 
 <script>
+  import { invokeApi } from '@api/http'
+
   export default {
     name: 'ServiceConfigs',
     props: {
@@ -56,43 +73,65 @@
           {
             title: '配置项名称',
             dataIndex: 'Name',
-            sorter: true,
             scopedSlots: { customRender: 'Name' }
           },
           {
             title: '容器路径',
             dataIndex: 'Path',
-            sorter: true,
             scopedSlots: { customRender: 'Path' }
           },
           {
             title: '用户',
             dataIndex: 'UID',
-            sorter: true,
             scopedSlots: { customRender: 'UID' }
           },
           {
             title: '用户组',
             dataIndex: 'GID',
-            sorter: true,
             scopedSlots: { customRender: 'GID' }
           },
           {
             title: '模式',
             dataIndex: 'Mode',
-            sorter: true,
             scopedSlots: { customRender: 'Mode' }
           },
           {
             title: '操作',
             dataIndex: 'action',
-            width: 150,
-            scopedSlots: { customRender: 'action' }
+            scopedSlots: { customRender: 'action' },
+            width: 120
           }
-        ]
+        ],
+        availableConfigs: [],
+        changed: false
       }
     },
-    methods: {}
+    methods: {
+      append() {
+      },
+      remove(record) {
+        this.changed = true
+      },
+      apply() {
+        const params = {}
+        invokeApi('', params).then((response) => {
+        }).catch(() => {
+        })
+      },
+      reset() {
+        this.changed = false
+      }
+    },
+    mounted() {
+      invokeApi('/config/list', {}).then(response => {
+        if (response.code === 2000) {
+          response.data.data.forEach(config => {
+            this.availableConfigs.push({ ID: config['ID'], Name: config['Spec']['Name'] })
+          })
+        } else {
+        }
+      })
+    }
   }
 </script>
 

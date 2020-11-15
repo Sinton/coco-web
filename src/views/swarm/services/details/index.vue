@@ -161,23 +161,8 @@
             this.placementConstraints = response.data['Spec']['TaskTemplate']['Placement']['Constraints']
             // 重启策略
             this.restartPolicy = response.data['Spec']['TaskTemplate']['RestartPolicy']
-            if (this.restartPolicy === null) {
-              this.restartPolicy = {
-                RestartCondition: 'any',
-                RestartDelay: 5000000000,
-                RestartMaxAttempts: 0,
-                RestartWindow: 0
-              }
-            }
             // 更新配置
             this.updateConfig = response.data['Spec']['UpdateConfig']
-            if (this.updateConfig === null) {
-              this.updateConfig = {
-                Delay: 0,
-                FailureAction: 'pause',
-                Parallelism: 1
-              }
-            }
             // 服务标签
             this.serviceLabels = response.data['Spec']['Labels']
             // 配置项
@@ -210,7 +195,7 @@
         }
         invokeApi('service/update', params).then(response => {
           if (response.code === 2000) {
-            // TODO 调整到列表
+            this.loadService()
           } else {
             this.$notification.warning({ message: '失败', description: '更新服务失败' })
           }
@@ -224,7 +209,7 @@
         }
         invokeApi('service/remove', params).then(response => {
           if (response.code === 2000) {
-            // TODO 调整到列表
+            this.$router.push('/resources/services')
           } else {
             this.$notification.warning({ message: '失败', description: '删除服务失败' })
           }
