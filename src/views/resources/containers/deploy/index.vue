@@ -61,21 +61,22 @@
       <a-divider/>
       <a-tabs default-activeKey="command">
         <a-tab-pane tab="命令" key="command">
-          <container-command :form-item-layout="formItemLayout"/>
+          <container-command :form-item-layout="formItemLayout" :data="commandData"/>
         </a-tab-pane>
         <a-tab-pane tab="存储卷" key="volumes">
           <container-volumes :data="volumeData"/>
         </a-tab-pane>
         <a-tab-pane tab="网络" key="networks">
-          <container-networks/>
+          <container-networks :form-item-layout="formItemLayout" :data="networkData"/>
         </a-tab-pane>
         <a-tab-pane tab="运行环境" key="runtime">
           <container-runtime/>
         </a-tab-pane>
         <a-tab-pane tab="资源配额" key="resources">
-          <container-resources/>
+          <container-resources :data="resourceData"/>
         </a-tab-pane>
-        <a-tab-pane tab="功能集" key="capability" style="height: 400px; overflow: paged-y"></a-tab-pane>
+        <a-tab-pane tab="功能集" key="capability" style="height: 400px; overflow: paged-y">
+        </a-tab-pane>
       </a-tabs>
     </a-card>
     <div class="fixed-block">
@@ -126,7 +127,7 @@
         portData: [],
         envData: [],
         labelData: [],
-        commandForm: {
+        commandData: {
           command: '',
           entryPoint: '',
           workingDir: '',
@@ -134,7 +135,7 @@
           console: 'null'
         },
         volumeData: [],
-        networkForm: {
+        networkData: {
           network: '',
           hostname: '',
           domainName: '',
@@ -145,10 +146,10 @@
         restartForm: {
           restart: ''
         },
-        resourceForm: {
-          memoryReservation: '',
-          memoryLimit: '',
-          cpuLimit: ''
+        resourceData: {
+          memoryReservations: 0,
+          memoryLimits: 0,
+          cpuLimits: 0.0
         },
         availableImages: [],
         deploying: false,
@@ -164,26 +165,30 @@
           name: this.containerSpecForm.getFieldValue('name'),
           image: this.containerSpecForm.getFieldValue('image'),
           autoRemove: this.containerSpecForm.getFieldValue('autoRemove'),
-          publishAllPorts: this.containerSpecForm.getFieldValue('publishAllPorts'),
-          ports: {},
-          envs: {},
-          labels: {}
+          publishAllPorts: this.containerSpecForm.getFieldValue('publishAllPorts')
         }
+
+        params['ports'] = {}
         this.portData.forEach(item => {
           if (!_.isEmpty(item['containerPort']) || _.isNumber(item['containerPort'])) {
             params['ports'][`${item['containerPort']}/${item['protocol']}`] = item['hostPort']
           }
         })
+
+        params['envs'] = {}
         this.envData.forEach(item => {
           if (!_.isEmpty(item['name'])) {
             params['envs'][item['name']] = item['value']
           }
         })
+
+        params['labels'] = {}
         this.labelData.forEach(item => {
           if (!_.isEmpty(item['name'])) {
             params['labels'][item['name']] = item['value']
           }
         })
+
         this.deploying = true
         this.deployingText = '部署中'
         invokeApi('/container/create', params).then(response => {
