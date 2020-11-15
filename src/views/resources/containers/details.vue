@@ -68,7 +68,8 @@
             <template v-else-if="item.prop === 'labels'">
               <coco-shield v-for="label in Object.keys(item.value)"
                            :key="label"
-                           :label="label">
+                           :label="label"
+                           style="display: table">
                 {{ item.value[label] }}
               </coco-shield>
             </template>

@@ -18,7 +18,6 @@
                :scroll="{ x: 'calc(700px + 50%)'}"
                :columns="columns"
                :data="loadContainers"
-               :showPagination="true"
                :alert="options.alert"
                :rowSelection="options.rowSelection">
         <!-- 容器名称/ID -->
@@ -33,7 +32,7 @@
         </template>
         <!-- 容器状态 -->
         <template slot="State" slot-scope="text">
-          <a-badge :status="text | containerStatus('color')" :text="text | containerStatus('text')"/>
+          <a-badge :color="text | containerStatus('color')" :text="text | containerStatus('text')"/>
         </template>
         <!-- 应用栈 -->
         <template slot="Stack" slot-scope="text, record">
@@ -145,7 +144,6 @@
           {
             title: '容器名称/ID',
             dataIndex: 'Id',
-            key: 'Id',
             rowKey: 'Id',
             sorter: true,
             scopedSlots: { customRender: 'Id' },
@@ -154,7 +152,6 @@
           {
             title: '状态',
             dataIndex: 'State',
-            key: 'State',
             rowKey: 'State',
             sorter: true,
             scopedSlots: { customRender: 'State' },
@@ -162,12 +159,12 @@
               { text: '运行中', value: 'running' },
               { text: '已停止', value: 'stop' },
               { text: '已退出', value: 'exited' }
-            ]
+            ],
+            width: 100
           },
           {
             title: '应用栈',
             dataIndex: 'Stack',
-            key: 'Stack',
             rowKey: 'Stack',
             sorter: true,
             scopedSlots: { customRender: 'Stack' },
@@ -176,7 +173,6 @@
           {
             title: '镜像名称',
             dataIndex: 'Image',
-            key: 'Image',
             rowKey: 'Image',
             sorter: true,
             scopedSlots: { customRender: 'Image' },
@@ -185,15 +181,14 @@
           {
             title: 'IP',
             dataIndex: 'IP',
-            key: 'IP',
             rowKey: 'IP',
             sorter: true,
-            scopedSlots: { customRender: 'IP' }
+            scopedSlots: { customRender: 'IP' },
+            width: 80
           },
           {
             title: '发布端口',
             dataIndex: 'Ports',
-            key: 'Ports',
             rowKey: 'Ports',
             sorter: true,
             scopedSlots: { customRender: 'Ports' },
@@ -202,18 +197,17 @@
           {
             title: '创建时间',
             dataIndex: 'Created',
-            key: 'Created',
             rowKey: 'Created',
             sorter: true,
-            scopedSlots: { customRender: 'Created' }
+            scopedSlots: { customRender: 'Created' },
+            width: 150
           },
           {
             title: '操作',
             dataIndex: 'action',
-            key: 'action',
             rowKey: 'action',
-            width: 230,
-            scopedSlots: { customRender: 'action' }
+            scopedSlots: { customRender: 'action' },
+            width: 230
           }
         ],
         selectedRowKeys: [],
@@ -242,21 +236,21 @@
         const status = _.toLower(text)
         switch (status) {
           case 'paused':
-            return mode === 'text' ? '已暂停' : 'default'
+            return mode === 'text' ? '已暂停' : '#d9d9d9'
           case 'dead':
-            return mode === 'text' ? '已失活' : 'error'
+            return mode === 'text' ? '已失活' : '#f5222d'
           case 'created':
-            return mode === 'text' ? '已创建' : 'cyan'
+            return mode === 'text' ? '已创建' : '#5bc0de'
           case 'exited':
-            return mode === 'text' ? '已停止' : 'error'
+            return mode === 'text' ? '已停止' : '#f5222d'
           case '(healthy)':
-            return mode === 'text' ? '健康的' : 'success'
+            return mode === 'text' ? '健康的' : '#52c41a'
           case '(unhealthy)':
-            return mode === 'text' ? '不良的' : 'warning'
+            return mode === 'text' ? '不良的' : '#faad14'
           case '(health: starting)':
-            return mode === 'text' ? '启动中' : 'processing'
+            return mode === 'text' ? '启动中' : '#1890ff'
           default:
-            return mode === 'text' ? '运行中' : 'success'
+            return mode === 'text' ? '运行中' : '#52c41a'
         }
       },
       stackName(label) {
