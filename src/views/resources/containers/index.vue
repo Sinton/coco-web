@@ -147,7 +147,8 @@
             rowKey: 'Id',
             sorter: true,
             scopedSlots: { customRender: 'Id' },
-            ellipsis: true
+            ellipsis: true,
+            width: 250
           },
           {
             title: '状态',
@@ -184,7 +185,7 @@
             rowKey: 'IP',
             sorter: true,
             scopedSlots: { customRender: 'IP' },
-            width: 80
+            width: 120
           },
           {
             title: '发布端口',
