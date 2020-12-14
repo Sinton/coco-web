@@ -94,7 +94,7 @@
     },
     methods: {
       loadHosts(params) {
-        return invokeApi('/endpoint/list', { ...params, ...this.queryParam }).then(response => {
+        return invokeApi('/host/list', { ...params, ...this.queryParam }).then(response => {
           if (response.code === 2000) {
             return response.data
           } else {
