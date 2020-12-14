@@ -86,7 +86,7 @@
         </template>
         <!-- 镜像标签 -->
         <template slot="RepoTags" slot-scope="text, record">
-          <a-tag v-for="(tagName, index) in formatRepoTags(record)" :key="index" color="#108ee9">{{ tagName }}</a-tag>
+          <a-tag style="margin-bottom: 4px" v-for="(tagName, index) in formatRepoTags(record)" :key="index" color="#108ee9">{{ tagName }}</a-tag>
         </template>
         <!-- 镜像大小 -->
         <template slot="Size" slot-scope="text, record">
@@ -121,7 +121,8 @@
             dataIndex: 'Id',
             key: 'Id',
             sorter: true,
-            scopedSlots: { customRender: 'Id' }
+            scopedSlots: { customRender: 'Id' },
+            width: 300
           },
           {
             title: '镜像标签',
@@ -135,14 +136,16 @@
             dataIndex: 'Size',
             key: 'Size',
             sorter: true,
-            scopedSlots: { customRender: 'Size' }
+            scopedSlots: { customRender: 'Size' },
+            width: 100
           },
           {
             title: '创建时间',
             dataIndex: 'Created',
             key: 'Created',
             sorter: true,
-            scopedSlots: { customRender: 'Created' }
+            scopedSlots: { customRender: 'Created' },
+            width: 150
           }
         ],
         selectedRowKeys: [],
