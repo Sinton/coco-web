@@ -1,7 +1,9 @@
 import Vue from 'vue'
+import Cookies from 'js-cookie'
 import { login, getInfo, logout } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
+import { socketConnect } from '@/utils/socket'
 
 const user = {
   state: {
@@ -37,10 +39,26 @@ const user = {
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
+          /*
           const result = response.result
           Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
           commit('SET_TOKEN', result.token)
           resolve()
+          */
+          if (response.code === 2000) {
+            const result = response.data
+            Vue.ls.set(ACCESS_TOKEN, result.token, 30 * 60 * 1000)
+            commit('SET_TOKEN', result.token)
+            Cookies.set(ACCESS_TOKEN, result.token)
+            socketConnect()
+            resolve()
+          } else {
+            const error = {}
+            error['response'] = {}
+            error['response']['data'] = {}
+            error['response']['data']['message'] = response.data
+            reject(error)
+          }
         }).catch(error => {
           reject(error)
         })
@@ -51,7 +69,7 @@ const user = {
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
-          const result = response.result
+          const result = response.data
 
           if (result.role && result.role.permissions.length > 0) {
             const role = result.role
@@ -71,6 +89,7 @@ const user = {
 
           commit('SET_NAME', { name: result.name, welcome: welcome() })
           commit('SET_AVATAR', result.avatar)
+          response.result = result
 
           resolve(response)
         }).catch(error => {
@@ -85,6 +104,7 @@ const user = {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         Vue.ls.remove(ACCESS_TOKEN)
+        Cookies.remove(ACCESS_TOKEN)
 
         logout(state.token).then(() => {
           resolve()

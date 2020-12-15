@@ -6,7 +6,6 @@ import App from './App.vue'
 import router from './router'
 import store from './store/'
 import { VueAxios } from './utils/request'
-import VueSocketIO from 'vue-socket.io'
 
 // mock
 import './mock'
@@ -20,10 +19,6 @@ Vue.config.productionTip = false
 
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)
-Vue.use(new VueSocketIO({
-  debug: false,
-  connection: 'http://localhost:9099'
-}))
 
 new Vue({
   router,
