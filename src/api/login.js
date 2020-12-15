@@ -1,4 +1,3 @@
-import api from './index'
 import { axios } from '@/utils/request'
 
 /**
@@ -22,7 +21,7 @@ export function login (parameter) {
 
 export function getSmsCaptcha (parameter) {
   return axios({
-    url: api.SendSms,
+    url: '/auth/smsCaptcha',
     method: 'post',
     data: parameter
   })
@@ -30,21 +29,15 @@ export function getSmsCaptcha (parameter) {
 
 export function getInfo () {
   return axios({
-    url: '/user/info',
-    method: 'get',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    url: '/user/profile',
+    method: 'get'
   })
 }
 
 export function logout () {
   return axios({
     url: '/auth/logout',
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    method: 'post'
   })
 }
 
@@ -54,7 +47,7 @@ export function logout () {
  */
 export function get2step (parameter) {
   return axios({
-    url: api.twoStepCode,
+    url: '/auth/twoFactor',
     method: 'post',
     data: parameter
   })
