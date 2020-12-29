@@ -72,7 +72,7 @@
       </div>
 
       <s-table ref="imagesRef"
-               rowKey="key"
+               :rowKey="record => record['Id']"
                size="middle"
                :columns="columns"
                :data="loadImages"
@@ -119,7 +119,6 @@
           {
             title: '镜像ID',
             dataIndex: 'Id',
-            key: 'Id',
             sorter: true,
             scopedSlots: { customRender: 'Id' },
             width: 300
@@ -127,14 +126,12 @@
           {
             title: '镜像标签',
             dataIndex: 'RepoTags',
-            key: 'RepoTags',
             sorter: true,
             scopedSlots: { customRender: 'RepoTags' }
           },
           {
             title: '镜像大小',
             dataIndex: 'Size',
-            key: 'Size',
             sorter: true,
             scopedSlots: { customRender: 'Size' },
             width: 100
@@ -142,7 +139,6 @@
           {
             title: '创建时间',
             dataIndex: 'Created',
-            key: 'Created',
             sorter: true,
             scopedSlots: { customRender: 'Created' },
             width: 150
@@ -290,14 +286,6 @@
       }
     },
     mounted() {
-      this.sockets.listener.subscribe('disconnect', () => {
-        this.pulling = false
-        this.pullingText = '拉取镜像'
-        this.$notification.error({
-          message: '提示',
-          description: `拉取镜像${this.pullImageForm.getFieldsValue()['imageName']}失败`
-        })
-      })
       this.sockets.listener.subscribe('pull', (data) => {
         if (_.isEmpty(data.id)) {
           if (data['status'].startsWith('Status:') || data['status'].startsWith('Digest:')) {

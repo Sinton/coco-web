@@ -13,7 +13,7 @@
       </div>
 
       <s-table ref="containersRef"
-               rowKey="key"
+               :rowKey="record => record['Id']"
                size="middle"
                :scroll="{ x: 'calc(700px + 50%)'}"
                :columns="columns"
@@ -144,7 +144,6 @@
           {
             title: '容器名称/ID',
             dataIndex: 'Id',
-            rowKey: 'Id',
             sorter: true,
             scopedSlots: { customRender: 'Id' },
             ellipsis: true,
@@ -153,7 +152,6 @@
           {
             title: '状态',
             dataIndex: 'State',
-            rowKey: 'State',
             sorter: true,
             scopedSlots: { customRender: 'State' },
             filters: [
@@ -166,7 +164,6 @@
           {
             title: '应用栈',
             dataIndex: 'Stack',
-            rowKey: 'Stack',
             sorter: true,
             scopedSlots: { customRender: 'Stack' },
             ellipsis: true
@@ -174,7 +171,6 @@
           {
             title: '镜像名称',
             dataIndex: 'Image',
-            rowKey: 'Image',
             sorter: true,
             scopedSlots: { customRender: 'Image' },
             ellipsis: true
@@ -182,7 +178,6 @@
           {
             title: 'IP',
             dataIndex: 'IP',
-            rowKey: 'IP',
             sorter: true,
             scopedSlots: { customRender: 'IP' },
             width: 120
@@ -190,7 +185,6 @@
           {
             title: '发布端口',
             dataIndex: 'Ports',
-            rowKey: 'Ports',
             sorter: true,
             scopedSlots: { customRender: 'Ports' },
             ellipsis: true
@@ -198,7 +192,6 @@
           {
             title: '创建时间',
             dataIndex: 'Created',
-            rowKey: 'Created',
             sorter: true,
             scopedSlots: { customRender: 'Created' },
             width: 150
@@ -206,7 +199,6 @@
           {
             title: '操作',
             dataIndex: 'action',
-            rowKey: 'action',
             scopedSlots: { customRender: 'action' },
             width: 230
           }

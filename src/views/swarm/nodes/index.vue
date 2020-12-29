@@ -21,7 +21,7 @@
         <a-button type="primary" icon="plus">创建集群节点</a-button>
       </div>
       <s-table ref="nodesRef"
-               rowKey="key"
+               :rowKey="record => record['Hostname']"
                size="middle"
                :columns="columns"
                :data="loadNodes"
@@ -96,56 +96,48 @@
           {
             title: '节点名',
             dataIndex: 'Hostname',
-            key: 'Hostname',
             sorter: true,
             scopedSlots: { customRender: 'Hostname' }
           },
           {
             title: '状态',
             dataIndex: 'Status',
-            key: 'Status',
             sorter: true,
             scopedSlots: { customRender: 'Status' }
           },
           {
             title: '资源使用',
             dataIndex: 'Resources',
-            key: 'Resources',
             sorter: true,
             scopedSlots: { customRender: 'Resources' }
           },
           {
             title: '引擎版本',
             dataIndex: 'EngineVersion',
-            key: 'EngineVersion',
             sorter: true,
             scopedSlots: { customRender: 'EngineVersion' }
           },
           {
             title: '集群角色',
             dataIndex: 'Role',
-            key: 'Role',
             sorter: true,
             scopedSlots: { customRender: 'Role' }
           },
           {
             title: 'IP地址',
             dataIndex: 'Addr',
-            key: 'Addr',
             sorter: true,
             scopedSlots: { customRender: 'Addr' }
           },
           {
             title: '更新时间',
             dataIndex: 'UpdatedAt',
-            key: 'UpdatedAt',
             sorter: true,
             scopedSlots: { customRender: 'UpdatedAt' }
           },
           {
             title: '创建时间',
             dataIndex: 'CreatedAt',
-            key: 'CreatedAt',
             sorter: true,
             scopedSlots: { customRender: 'CreatedAt' }
           }

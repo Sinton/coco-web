@@ -7,7 +7,7 @@
         <a-button type="primary" icon="plus">创建服务</a-button>
       </div>
       <s-table ref="servicesRef"
-               rowKey="key"
+               :rowKey="record => record['ID']"
                size="middle"
                :columns="columns"
                :data="loadServices"

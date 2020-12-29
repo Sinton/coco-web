@@ -14,7 +14,7 @@
       </div>
 
       <s-table ref="hostsRef"
-               rowKey="key"
+               :rowKey="record => record['id']"
                size="middle"
                :columns="columns"
                :data="loadHosts"
@@ -58,8 +58,6 @@
           {
             title: '主机IP',
             dataIndex: 'ip',
-            key: 'ip',
-            rowKey: 'ip',
             sorter: true,
             scopedSlots: { customRender: 'ip' },
             ellipsis: true
@@ -67,8 +65,6 @@
           {
             title: '操作',
             dataIndex: 'action',
-            key: 'action',
-            rowKey: 'action',
             width: 100,
             scopedSlots: { customRender: 'action' }
           }

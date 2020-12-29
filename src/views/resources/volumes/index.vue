@@ -7,7 +7,7 @@
         <a-button type="primary" icon="plus">创建挂载卷</a-button>
       </div>
       <s-table ref="volumesRef"
-               rowKey="key"
+               :rowKey="record => record['Name']"
                size="middle"
                :columns="volumesOption.columns"
                :data="loadVolumes"

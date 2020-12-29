@@ -7,7 +7,7 @@
         <a-button type="primary" icon="plus">添加新密钥配置</a-button>
       </div>
       <s-table ref="secretsRef"
-               rowKey="key"
+               :rowKey="record => record['ID']"
                size="middle"
                :columns="columns"
                :data="loadSecrets"
