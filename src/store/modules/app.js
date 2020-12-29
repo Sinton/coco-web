@@ -24,7 +24,8 @@ const app = {
     autoHideHeader: false,
     color: null,
     weak: false,
-    multiTab: true
+    multiTab: true,
+    endpoint: null
   },
   mutations: {
     SET_SIDEBAR_TYPE: (state, type) => {
@@ -74,6 +75,10 @@ const app = {
     TOGGLE_MULTI_TAB: (state, bool) => {
       Vue.ls.set(DEFAULT_MULTI_TAB, bool)
       state.multiTab = bool
+    },
+    SWITCH_ENDPOINT: (state, endpoint) => {
+      Vue.ls.set('ENDPOINT', endpoint)
+      state.endpoint = endpoint
     }
   },
   actions: {
@@ -115,6 +120,9 @@ const app = {
     },
     ToggleMultiTab ({ commit }, bool) {
       commit('TOGGLE_MULTI_TAB', bool)
+    },
+    SwitchEndpoint ({ commit }, endpoint) {
+      commit('SWITCH_ENDPOINT', endpoint)
     }
   }
 }
