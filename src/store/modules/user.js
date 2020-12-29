@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import Cookies from 'js-cookie'
 import { login, getInfo, logout } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
@@ -47,9 +46,8 @@ const user = {
           */
           if (response.code === 2000) {
             const result = response.data
-            Vue.ls.set(ACCESS_TOKEN, result.token, 30 * 60 * 1000)
+            Vue.ls.set(ACCESS_TOKEN, result.token)
             commit('SET_TOKEN', result.token)
-            Cookies.set(ACCESS_TOKEN, result.token)
             socketConnect()
             resolve()
           } else {
@@ -103,8 +101,8 @@ const user = {
       return new Promise((resolve) => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
+        Vue.ls.remove('ENDPOINT')
         Vue.ls.remove(ACCESS_TOKEN)
-        Cookies.remove(ACCESS_TOKEN)
 
         logout(state.token).then(() => {
           resolve()
