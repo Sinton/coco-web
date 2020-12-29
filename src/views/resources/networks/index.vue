@@ -7,20 +7,21 @@
         <a-button type="primary" icon="plus">创建网络</a-button>
       </div>
       <s-table ref="networksRef"
-               rowKey="key"
+               :rowKey="record => record['Id']"
                size="middle"
+               :scroll="{ x: 'calc(700px + 50%)'}"
                :columns="columns"
                :data="loadNetworks"
                :alert="options.alert"
                :rowSelection="options.rowSelection">
         <!-- 网络名称 -->
-        <template slot="Name" slot-scope="text, record">
-          <router-link :to="{ path: `networks/${record['Id']}`, params: { networkId: record['Id'] } }">
-            {{ text | truncate(40) }}
+        <template slot="Id" slot-scope="text, record">
+          <router-link :to="{ path: `networks/${text}`, params: { networkId: text } }">
+            {{ record['Name'] + record['Name'] | truncate(32) }}
           </router-link>
           <a-tooltip placement="right">
             <a-icon type="info-circle"/>
-            <template slot="title">{{ record['Id'] }}</template>
+            <template slot="title">{{ text }}</template>
           </a-tooltip>
         </template>
         <!-- 应用栈 -->
@@ -64,9 +65,10 @@
         columns: [
           {
             title: '网络名称',
-            dataIndex: 'Name',
+            dataIndex: 'Id',
             sorter: true,
-            scopedSlots: { customRender: 'Name' }
+            scopedSlots: { customRender: 'Id' },
+            width: 260
           },
           {
             title: '应用栈',
@@ -78,43 +80,50 @@
             title: '作用域',
             dataIndex: 'Scope',
             sorter: true,
-            scopedSlots: { customRender: 'Scope' }
+            scopedSlots: { customRender: 'Scope' },
+            width: 80
           },
           {
             title: '驱动',
             dataIndex: 'Driver',
             sorter: true,
-            scopedSlots: { customRender: 'Driver' }
+            scopedSlots: { customRender: 'Driver' },
+            width: 80
           },
           {
             title: '是否可附加',
             dataIndex: 'Attachable',
             sorter: true,
-            scopedSlots: { customRender: 'Attachable' }
+            scopedSlots: { customRender: 'Attachable' },
+            width: 110
           },
           {
             title: '是否内部',
             dataIndex: 'Internal',
             sorter: true,
-            scopedSlots: { customRender: 'Internal' }
+            scopedSlots: { customRender: 'Internal' },
+            width: 100
           },
           {
             title: 'IPAM 驱动',
             dataIndex: 'IPAMDriver',
             sorter: true,
-            scopedSlots: { customRender: 'IPAMDriver' }
+            scopedSlots: { customRender: 'IPAMDriver' },
+            width: 110
           },
           {
             title: 'IPAM 子网',
             dataIndex: 'IPAMSubnet',
             sorter: true,
-            scopedSlots: { customRender: 'IPAMSubnet' }
+            scopedSlots: { customRender: 'IPAMSubnet' },
+            width: 110
           },
           {
             title: 'IPAM 子网',
             dataIndex: 'IPAMGateway',
             sorter: true,
-            scopedSlots: { customRender: 'IPAMGateway' }
+            scopedSlots: { customRender: 'IPAMGateway' },
+            width: 110
           }
         ],
         selectedRowKeys: [],

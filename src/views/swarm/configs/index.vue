@@ -7,7 +7,7 @@
         <a-button type="primary" icon="plus" @click="() => { this.configContent = ''; this.configContentVisible = true }">添加新配置</a-button>
       </div>
       <s-table ref="configsRef"
-               rowKey="key"
+               :rowKey="record => record['ID']"
                size="middle"
                :columns="columns"
                :data="loadConfigs"
@@ -79,9 +79,7 @@
                 @click="() => remove(k)"/>
       </a-form-item>
       <a-form-item v-bind="formItemLayoutWithOutLabel">
-        <a-button type="dashed" icon="plus" style="width: 60%" @click="add">
-          {{ addText }}
-        </a-button>
+        <a-button type="dashed" icon="plus" style="width: 60%" @click="add">添加标签</a-button>
       </a-form-item>
       <div class="fixed-block">
         <a-button type="primary" @click="createConfig" :loading="creating">{{ creatingText }}</a-button>
@@ -125,6 +123,7 @@
             sm: { span: 20, offset: 4 }
           }
         },
+        addText: 'aa',
         queryParam: {},
         columns: [
           {
