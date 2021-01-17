@@ -7,14 +7,25 @@
         <a-button type="primary" icon="plus">创建应用栈</a-button>
       </div>
       <s-table ref="stacksRef"
-               rowKey="key"
+               :rowKey="record => record['id']"
                size="middle"
                :columns="stackOption.columns"
                :data="loadStacks"
                :alert="options.alert"
                :rowSelection="options.rowSelection">
-        <template slot="Type" slot-scope="text">
-          {{ text === 1 ? 'Swarm' : 'Compose' }}
+        <template slot="id" slot-scope="text, record">
+          <a-list-item>
+            <a-list-item-meta>
+              <a-avatar slot="avatar" size="large" shape="square" :src="'https://www.logolynx.com/images/logolynx/b7/b769fa4ba92e48da33e691a69ca62224.png'"/>
+              <a slot="title">{{ record['name'] }}</a>
+            </a-list-item-meta>
+          </a-list-item>
+          <!--<router-link :to="{ path: `stacks/${record['id']}`, params: { stackId: record['id'] } }">
+            {{ text }}
+          </router-link>-->
+        </template>
+        <template slot="type" slot-scope="text">
+          {{ text === 1 ? 'Compose' : 'Swarm' }}
         </template>
       </s-table>
     </a-card>
@@ -38,24 +49,18 @@
         stackOption: {
           columns: [
             {
-              title: '应用栈名称',
-              dataIndex: 'Name',
+              title: '应用栈名称/ID',
+              dataIndex: 'id',
               sorter: true,
-              scopedSlots: { customRender: 'Name' },
+              scopedSlots: { customRender: 'id' },
               ellipsis: true
             },
             {
               title: '应用栈类型',
-              dataIndex: 'Type',
+              dataIndex: 'type',
               sorter: true,
-              scopedSlots: { customRender: 'Type' },
+              scopedSlots: { customRender: 'type' },
               ellipsis: true
-            },
-            {
-              title: '操作',
-              dataIndex: 'action',
-              width: 230,
-              scopedSlots: { customRender: 'action' }
             }
           ],
           data: null
@@ -79,10 +84,7 @@
           if (response.code === 2000) {
             return response.data
           } else {
-            this.$notification.error({
-              message: '标题',
-              description: '加载数据失败'
-            })
+            this.$notification.warning({ message: '标题', description: '加载数据失败' })
           }
         })
       },
