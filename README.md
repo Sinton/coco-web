@@ -20,23 +20,37 @@ An out-of-box UI solution for enterprise applications as a Vue boilerplate. base
 - ChangeLog: https://pro.loacg.com/docs/changelog
 - FAQ: https://pro.loacg.com/docs/faq
 - Branches:
-  - demo/router-view-table: CRUD view in router
-  - feature/demand_load: loaded on demand
-  - feature/lang: i18n support
-  - feature/dynamic-menu: dynamic menu demo
-  - lite: lite template (legacy)
+  - feature/pro: antdv-pro
+  - feature/third-party-auth: LDAP、Github's OAuth support
+  - feature/ic: aliyun's ECS、amazon's AWS support
 
 
 Overview
 ----
 
-![dashboard + multi-tabs](https://static-2.loacg.com/open/static/github/20190224163345.jpg)
+![stacks manager]()
 
-![dashboard + setting](https://static-2.loacg.com/open/static/github/20181126112124.png)
+![images manager]()
 
-![user profile](https://static-2.loacg.com/open/static/github/20180916-134251.png)
+![volumes manager]()
 
-![permission list](https://static-2.loacg.com/open/static/github/20180916-154937.png)
+![containers manager]()
+
+![swarm cluster manager]()
+
+![swarm service manager]()
+
+![swarm config manager]()
+
+![swarm secret manager]()
+
+![notification]()
+
+![permission list]()
+
+![user profile]()
+
+![setting]()
 
 
 ### Env and dependencies
