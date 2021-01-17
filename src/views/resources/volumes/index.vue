@@ -3,7 +3,7 @@
     <a-card :title="'挂载卷列表'" :bordered="false">
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['volumesRef'].refresh()">刷新</a-button>
-        <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0">删除</a-button>
+        <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeVolume">删除</a-button>
         <a-button type="primary" icon="plus">创建挂载卷</a-button>
       </div>
       <s-table ref="volumesRef"
@@ -77,16 +77,11 @@
         },
         selectedRowKeys: [],
         selectedRows: [],
-
         // custom table alert & rowSelection
         options: {
-          alert: {
-            show: true,
-            clear: () => {
-              this.selectedRowKeys = []
-            }
-          },
+          alert: { show: true, clear: () => { this.selectedRowKeys = [] } },
           rowSelection: {
+            selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
             onChange: this.onSelectChange
           }
@@ -110,11 +105,30 @@
           if (response.code === 2000) {
             return response.data
           } else {
-            this.$notification.error({
-              message: '标题',
-              description: '加载数据失败'
-            })
+            this.$notification.error({ message: '标题', description: '加载数据失败' })
           }
+        })
+      },
+      removeVolume() {
+        this.selectedRows.forEach(item => {
+          const params = {
+            volumeName: item.Name
+          }
+          invokeApi('/volume/remove', params).then(response => {
+            if (response.code === 2000) {
+              this.selectedRows = []
+              this.selectedRowKeys = []
+              this.$refs['volumesRef'].selectedRows = this.selectedRows
+              this.$refs['volumesRef'].selectedRowKeys = this.selectedRowKeys
+              this.$notification.success({ message: '提示', description: response.data })
+            } else {
+              this.$notification.warning({ message: '标题', description: response.data })
+            }
+          }).catch(() => {
+            this.$notification.error({ message: '错误', description: '请求接口异常' })
+          }).finally(() => {
+            this.$refs['volumesRef'].refresh()
+          })
         })
       },
       onSelectChange(selectedRowKeys, selectedRows) {
