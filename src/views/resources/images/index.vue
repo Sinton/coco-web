@@ -13,9 +13,9 @@
           </a-col>
           <a-col :lg="12" :md="12" :sm="24">
             <a-form-item v-bind="{labelCol: { span: 4 }, wrapperCol: { span: 20 }}" label="镜像Registry">
-              <a-select v-decorator="['registry', {initialValue: 'DockerHub', rules: [{ required: true, message: '请选择镜像Registry'}]}]"
+              <a-select v-decorator="['registry', {initialValue: 'docker.io', rules: [{ required: true, message: '请选择镜像Registry'}]}]"
                         placeholder="请选择镜像Registry">
-                <a-select-option value="DockerHub" :selected="true">DockerHub</a-select-option>
+                <a-select-option value="docker.io" :selected="true">DockerHub</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -238,7 +238,13 @@
           }
           this.pulling = true
           this.pullingText = '拉取镜像中...'
-          invokeApi('/image/pull', params)
+          invokeApi('/image/pull', params).then(response => {
+            if (response.code !== 2000) {
+              this.$notification.error({ message: '提示', description: response.data })
+            }
+          }).catch(() => {
+            this.$notification.error({ message: '错误', description: '请求接口异常' })
+          })
         }
       },
       removeImage(event, force = false, noPrune = true) {
@@ -256,7 +262,7 @@
               this.$refs['imagesRef'].selectedRowKeys = this.selectedRowKeys
               this.$notification.success({ message: '提示', description: response.data })
             } else {
-              this.$notification.error({ message: '提示', description: response.data })
+              this.$notification.warning({ message: '提示', description: response.data })
             }
           }).catch(() => {
             this.$notification.error({ message: '错误', description: '请求接口异常' })
