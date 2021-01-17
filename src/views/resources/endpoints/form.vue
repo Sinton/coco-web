@@ -4,7 +4,7 @@
             :visible="visible"
             :get-container="false"
             @close="onClose">
-    <a-form :form="data">
+    <a-form :form="endpointForm">
       <a-row :gutter="16">
         <a-col :span="24">
           <a-form-item label="终端名称" v-bind="formItemLayout">
@@ -30,7 +30,7 @@
                       checked-children="开"
                       un-checked-children="关">
             </a-switch>
-            <template v-if="data.getFieldValue('tls')">
+            <template v-if="endpointForm.getFieldValue('tls')">
               <a-divider orientation="left">TLS 模式</a-divider>
               <p>可以在<a href="https://docs.docker.com/engine/security/https/" target="_blank">Docker文档</a>中找到有关如何使用TLS保护Docker环境的更多信息</p>
               <a-radio-group v-model="tlsMode" default-value="cs">
@@ -67,7 +67,7 @@
     </a-form>
     <div :style="{position: 'absolute', right: 0, bottom: 0, width: '100%', borderTop: '1px solid #e9e9e9', padding: '10px 16px', background: '#fff', textAlign: 'right',zIndex: 1}">
       <a-button :style="{ marginRight: '8px' }" @click="onClose">取消</a-button>
-      <a-button type="primary" @click="addEndpoint">提交</a-button>
+      <a-button type="primary" @click="saveOrUpdateEndpoint">提交</a-button>
     </div>
   </a-drawer>
 </template>
@@ -80,16 +80,16 @@
     props: {
       visible: {
         type: Boolean,
-        default: true
+        default: false
       },
       data: {
         type: Object,
-        default: () => this.$form.createForm(this)
+        default: () => {}
       }
     },
     data() {
       return {
-        form: this.$form.createForm(this),
+        endpointForm: this.$form.createForm(this),
         formItemLayout: {
           labelCol: {
             xs: { span: 24 },
@@ -104,14 +104,14 @@
       }
     },
     methods: {
-      addEndpoint() {
-        this.data.validateFields((errors, fieldsValue) => {
+      saveOrUpdateEndpoint() {
+        this.endpointForm.validateFields((errors, fieldsValue) => {
           if (!errors) {
             invokeApi('/endpoint/create', fieldsValue).then(response => {
               if (response.code === 2000) {
                 this.$notification.success({ message: '成功', description: '创建服务终端成功' })
-                this.data.resetFields()
-                this.$emit('on-reload')
+                this.endpointForm.resetFields()
+                this.$emit('added')
                 this.onClose()
               } else {
                 this.$notification.warning({ message: '标题', description: response.data })
@@ -124,6 +124,22 @@
       },
       onClose() {
         this.$emit('on-close')
+      }
+    },
+    watch: {
+      visible(currVisible) {
+        if (currVisible) {
+          if (this.data == null) {
+            this.endpointForm.resetFields()
+          } else {
+            this.endpointForm.setFieldsValue({
+              name: this.data['name'],
+              url: this.data['endpointUrl'],
+              ip: this.data['publicIp'],
+              tls: this.data['tlsEnable'] === 1
+            })
+          }
+        }
       }
     }
   }

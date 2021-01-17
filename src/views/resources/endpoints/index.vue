@@ -10,7 +10,7 @@
       <div class="table-operator">
         <a-button icon="reload" @click="loadEndpoints">刷新</a-button>
         <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeEndpoints">删除</a-button>
-        <a-button type="primary" icon="plus" @click="addEndpoint">添加新终端</a-button>
+        <a-button type="primary" icon="plus" @click="visibleEndpointData('add')">添加新终端</a-button>
       </div>
 
       <a-list v-if="displayMode === 'list'" :item-layout="'horizontal'" :bordered="true" :data-source="endpoints">
@@ -77,11 +77,14 @@
           <a-badge :color="record['status'] === 1 ? '#52c41a' : '#f5222d'" :text="record['status'] === 1 ? '就绪在线' : '下线'"/>
         </template>
         <template slot="action" slot-scope="text, record">
-          <a @click="modifyEndpoint(text)">修改</a>
+          <a @click="visibleEndpointData('modify', record)">修改</a>
         </template>
       </s-table>
     </a-card>
-    <endpoint-form :visible="visible" :data="endpointForm" @on-close="closeForm" @on-reload="reloadEndpoints"/>
+    <endpoint-form :visible="visible"
+                   :data="endpointData"
+                   @on-close="() => this.visible = false"
+                   @added="() => this.$refs['endpointsRef'].refresh()"/>
   </page-view>
 </template>
 
@@ -142,7 +145,7 @@
         },
         visible: false,
         endpoints: [],
-        endpointForm: this.$form.createForm(this)
+        endpointData: {}
       }
     },
     computed: {
@@ -155,11 +158,13 @@
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
       },
-      closeForm() {
-        this.visible = false
-      },
-      addEndpoint() {
+      visibleEndpointData(operateType, endpoint) {
         this.visible = true
+        if (operateType === 'add') {
+          this.endpointData = null
+        } else {
+          this.endpointData = endpoint
+        }
       },
       removeEndpoints() {
         this.selectedRows.forEach(item => {
@@ -181,13 +186,6 @@
           })
         })
       },
-      modifyEndpoint(endpoint) {
-        console.log(endpoint)
-        this.visible = true
-        // this.endpointForm['url'] = endpoint['endpointUrl']
-        // this.endpointForm['ip'] = endpoint['publicIp']
-        // this.endpointForm['tls'] = endpoint['tlsEnable'] === 1
-      },
       switchEndpoint(endpointId) {
         const params = {
           id: endpointId
@@ -198,9 +196,6 @@
         }).catch(() => {
           this.$notification.error({ message: '标题', description: '切换服务终端失败' })
         })
-      },
-      reloadEndpoints() {
-        this.$refs['endpointsRef'].refresh()
       },
       loadEndpoints() {
         return invokeApi('/endpoint/list', {}).then(response => {
