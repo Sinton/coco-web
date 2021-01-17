@@ -12,12 +12,13 @@
                            :data-source="isEmpty(this.containerSpecForm.getFieldValue('image')) ? [] : availableImages"
                            :allow-clear="true"
                            :filter-option="filterImages"
+                           @search="loadImages"
                            placeholder="请输入镜像">
           </a-auto-complete>
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="镜像仓库">
-          <a-select v-decorator="['registry', {initialValue: 'DockerHub'}]" placeholder="请选择镜像Registry">
-            <a-select-option value="DockerHub">DockerHub</a-select-option>
+          <a-select v-decorator="['registry', {initialValue: 'docker.io'}]" placeholder="请选择镜像Registry">
+            <a-select-option value="docker.io">DockerHub</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item v-bind="formItemLayout" label="总是拉取镜像">
@@ -70,7 +71,7 @@
           <container-networks :form-item-layout="formItemLayout" :data="networkData"/>
         </a-tab-pane>
         <a-tab-pane tab="运行环境" key="runtime">
-          <container-runtime/>
+          <container-runtime :data="runtimeData"/>
         </a-tab-pane>
         <a-tab-pane tab="资源配额" key="resources">
           <container-resources :data="resourceData"/>
@@ -143,8 +144,9 @@
           ipv4: '',
           ipv6: ''
         },
-        restartForm: {
-          restart: ''
+        runtimeData: {
+          restartPolicy: 'never',
+          privilegedMode: false
         },
         resourceData: {
           memoryReservations: 0,
@@ -161,7 +163,7 @@
         return _.isEmpty(this.containerSpecForm.getFieldValue('name')) || _.isEmpty(this.containerSpecForm.getFieldValue('image'))
       },
       deployContainer() {
-        const params = {
+        let params = {
           name: this.containerSpecForm.getFieldValue('name'),
           image: this.containerSpecForm.getFieldValue('image'),
           autoRemove: this.containerSpecForm.getFieldValue('autoRemove'),
@@ -189,6 +191,8 @@
           }
         })
 
+        params = { ...params, ...this.runtimeData }
+
         this.deploying = true
         this.deployingText = '部署中'
         invokeApi('/container/create', params).then(response => {
@@ -204,18 +208,25 @@
         })
       },
       loadImages() {
-        const params = { filter: { all: true, dangling: false } }
-        invokeApi('/image/list', params).then(response => {
-          if (response.code === 2000) {
-            response.data.data.forEach(image => {
-              this.availableImages = _.union(this.availableImages, image['RepoTags'])
-            })
-          } else {
-            this.$notification.warning({ message: '警告', description: response.data })
-          }
-        }).catch(error => {
-          this.$notification.error({ message: '错误', description: error })
-        })
+        const params = {
+          filter: { all: true, dangling: false },
+          searchName: this.containerSpecForm.getFieldValue('image')
+        }
+        if (!_.isEmpty(this.containerSpecForm.getFieldValue('image'))) {
+          invokeApi('/image/list', params).then(response => {
+            if (response.code === 2000) {
+              this.availableImages = []
+              response.data.data.forEach(image => {
+                this.availableImages = _.union(this.availableImages, image['RepoTags'])
+              })
+            } else {
+              this.availableImages = []
+              this.$notification.warning({ message: '警告', description: response.data })
+            }
+          }).catch(error => {
+            this.$notification.error({ message: '错误', description: error })
+          })
+        }
       },
       filterImages(input, option) {
         return option.componentOptions.children[0].text.includes(input)
