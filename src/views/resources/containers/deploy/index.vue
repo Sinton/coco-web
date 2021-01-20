@@ -137,7 +137,7 @@
         },
         volumeData: [],
         networkData: {
-          network: '',
+          network: undefined,
           hostname: '',
           domainName: '',
           macAddr: '',
@@ -191,6 +191,15 @@
           }
         })
 
+        params['volumes'] = {}
+        this.volumeData.forEach(item => {
+          if (!_.isEmpty(item['source'])) {
+            params['volumes'][item['source']] = item['containerPath']
+          }
+        })
+
+        params['networkingConfig'] = this.networkData
+
         params = { ...params, ...this.runtimeData }
 
         this.deploying = true
@@ -202,6 +211,8 @@
           } else {
             this.$notification.warning({ message: '警告', description: response.data })
           }
+        }).catch(() => {
+          this.$notification.error({ message: '错误', description: '部署容器失败' })
         }).finally(() => {
           this.deploying = false
           this.deployingText = '部署'
