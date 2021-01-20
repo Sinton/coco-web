@@ -17,11 +17,11 @@
         <!-- 网络名称 -->
         <template slot="Id" slot-scope="text, record">
           <router-link :to="{ path: `networks/${text}`, params: { networkId: text } }">
-            {{ record['Name'] + record['Name'] | truncate(32) }}
+            {{ record['Name'] | truncate(32) }}
           </router-link>
           <a-tooltip placement="right">
             <a-icon type="info-circle"/>
-            <template slot="title">{{ text }}</template>
+            <template slot="title">网络ID: {{ text }}</template>
           </a-tooltip>
         </template>
         <!-- 应用栈 -->
@@ -68,7 +68,7 @@
             dataIndex: 'Id',
             sorter: true,
             scopedSlots: { customRender: 'Id' },
-            width: 260
+            width: 265
           },
           {
             title: '应用栈',
@@ -116,7 +116,7 @@
             dataIndex: 'IPAMSubnet',
             sorter: true,
             scopedSlots: { customRender: 'IPAMSubnet' },
-            width: 110
+            width: 125
           },
           {
             title: 'IPAM 子网',
