@@ -151,7 +151,7 @@
         resourceData: {
           memoryReservations: 0,
           memoryLimits: 0,
-          cpuLimits: 0.0
+          cpuLimits: 0
         },
         availableImages: [],
         deploying: false,
@@ -199,6 +199,8 @@
         })
 
         params['networkingConfig'] = this.networkData
+
+        params['resources'] = this.resourceData
 
         params = { ...params, ...this.runtimeData }
 
