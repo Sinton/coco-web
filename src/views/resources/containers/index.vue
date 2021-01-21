@@ -371,6 +371,8 @@
           invokeApi('/container/remove', params).then(response => {
             if (response.code === 2000) {
               this.$notification.success({ message: '成功', description: response.data })
+              this.selectedRows = []
+              this.selectedRowKeys = []
               this.$refs['containersRef'].selectedRowKeys = []
               this.$refs['containersRef'].selectedRows = []
             } else {
