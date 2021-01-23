@@ -16,7 +16,7 @@
       <a-input v-model="data.ipv6" placeholder="例如 a:b:c:d::1234"/>
     </a-form-item>
     <a-form-item v-bind="formItemLayout" label="MAC地址">
-      <a-input v-model="data.macAddr"placeholder="例如 12-34-56-78-9a-bc"/>
+      <a-input v-model="data.macAddr" placeholder="例如 12-34-56-78-9a-bc"/>
     </a-form-item>
     <a-form-item v-bind="formItemLayout" label="域名">
       <a-input v-model="data.domainName" placeholder="例如 example.com"/>

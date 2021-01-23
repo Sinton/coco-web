@@ -47,19 +47,19 @@
         this.resources.push(
           {
             prop: 'memoryReservations',
-            tips: '节点上可用于运行服务调度任务的最小内存(设置为0则表示不限制)',
+            tips: '容器用于运行服务调的最小内存(设置为0则表示不限制)',
             label: '内存资源预留 (MB)：',
             value: this.data['memoryReservations']
           },
           {
             prop: 'memoryLimits',
-            tips: '每个调度任务可用的最大内存(设置为0则表示不限制)',
+            tips: '容器可用的最大内存(设置为0则表示不限制)',
             label: '内存资源限制 (MB)：',
             value: this.data['memoryLimits']
           },
           {
             prop: 'cpuLimits',
-            tips: '每个调度任务可用的最大CPU使用率',
+            tips: '容器可用的最大CPU使用率',
             label: 'CPU资源限制：',
             value: this.data['cpuLimits']
           }
