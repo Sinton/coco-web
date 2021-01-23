@@ -4,7 +4,7 @@
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['networksRef'].refresh()">刷新</a-button>
         <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeNetwork">删除</a-button>
-        <a-button type="primary" icon="plus">创建网络</a-button>
+        <a-button type="primary" icon="plus" @click="() => this.visible = true">创建网络</a-button>
       </div>
       <s-table ref="networksRef"
                :rowKey="record => record['Id']"
@@ -45,6 +45,7 @@
         </template>
       </s-table>
     </a-card>
+    <network-form :visible="visible" @on-close="() => this.visible = false" @added="() => this.$refs['networksRef'].refresh()"/>
   </page-view>
 </template>
 
@@ -52,10 +53,12 @@
   import { PageView } from '@/layouts'
   import { STable } from '@/components'
   import { invokeApi } from '@api/http'
+  import NetworkForm from '@/views/resources/networks/form'
 
   export default {
     name: 'NetworksList',
     components: {
+      NetworkForm,
       PageView,
       STable
     },
@@ -136,7 +139,8 @@
             selectedRowKeys: this.selectedRowKeys,
             onChange: this.onSelectChange
           }
-        }
+        },
+        visible: false
       }
     },
     filters: {
@@ -184,10 +188,7 @@
           if (response.code === 2000) {
             return response.data
           } else {
-            this.$notification.error({
-              message: '标题',
-              description: '加载数据失败'
-            })
+            this.$notification.error({ message: '标题', description: '加载数据失败' })
           }
         })
       },
