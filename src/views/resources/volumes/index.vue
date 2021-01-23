@@ -4,7 +4,7 @@
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['volumesRef'].refresh()">刷新</a-button>
         <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeVolume">删除</a-button>
-        <a-button type="primary" icon="plus">创建挂载卷</a-button>
+        <a-button type="primary" icon="plus" @click="() => this.visible = true">创建挂载卷</a-button>
       </div>
       <s-table ref="volumesRef"
                :rowKey="record => record['Name']"
@@ -23,6 +23,7 @@
         <template slot="CreatedAt" slot-scope="text">{{ text | moment }}</template>
       </s-table>
     </a-card>
+    <volume-form :visible="visible" @on-close="() => this.visible = false" @added="() => this.$refs['volumesRef'].refresh()"/>
   </page-view>
 </template>
 
@@ -30,10 +31,12 @@
   import { PageView } from '@/layouts'
   import { STable } from '@/components'
   import { invokeApi } from '@api/http'
+  import VolumeForm from '@/views/resources/volumes/form'
 
   export default {
     name: 'VolumesList',
     components: {
+      VolumeForm,
       PageView,
       STable
     },
@@ -85,7 +88,8 @@
             selectedRowKeys: this.selectedRowKeys,
             onChange: this.onSelectChange
           }
-        }
+        },
+        visible: false
       }
     },
     filters: {
