@@ -91,7 +91,8 @@
           rejected: { alias: '任务调度被拒绝', color: '#f50', tip: 'Err' },
           running: { alias: '任务运行中', color: '#87d068', tip: '' },
           complete: { alias: '任务调度完成', color: '#108ee9', tip: '' },
-          shutdown: { alias: '任务已关闭', color: '#f50', tip: '' }
+          shutdown: { alias: '任务已关闭', color: '#f50', tip: '' },
+          preparing: { alias: '任务调度准备中', color: '#2db7f5', tip: '' }
         }
       }
     },
