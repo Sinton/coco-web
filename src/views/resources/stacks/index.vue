@@ -4,7 +4,7 @@
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['stacksRef'].refresh()">刷新</a-button>
         <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0">删除</a-button>
-        <a-button type="primary" icon="plus">创建应用栈</a-button>
+        <a-button type="primary" icon="plus" @click="() => this.visible = true">创建应用栈</a-button>
       </div>
       <s-table ref="stacksRef"
                :rowKey="record => record['id']"
@@ -29,6 +29,7 @@
         </template>
       </s-table>
     </a-card>
+    <stack-form :visible="visible" @on-close="() => this.visible = false"/>
   </page-view>
 </template>
 
@@ -36,10 +37,12 @@
   import { PageView } from '@/layouts'
   import { STable } from '@/components'
   import { invokeApi } from '@api/http'
+  import StackForm from '@/views/resources/stacks/form'
 
   export default {
     name: 'StacksList',
     components: {
+      StackForm,
       PageView,
       STable
     },
@@ -75,7 +78,8 @@
             selectedRowKeys: this.selectedRowKeys,
             onChange: this.onSelectChange
           }
-        }
+        },
+        visible: false
       }
     },
     methods: {
