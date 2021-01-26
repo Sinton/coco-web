@@ -16,7 +16,7 @@
         </a-button-group>
       </div>
       <div class="table-operator">
-        <a-button icon="reload" @click="() => $refs['nodesRef'].refresh" >刷新</a-button>
+        <a-button icon="reload" @click="() => $refs['nodesRef'].refresh()" >刷新</a-button>
         <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0">删除</a-button>
         <a-button type="primary" icon="plus">创建集群节点</a-button>
       </div>
@@ -103,7 +103,8 @@
             title: '状态',
             dataIndex: 'Status',
             sorter: true,
-            scopedSlots: { customRender: 'Status' }
+            scopedSlots: { customRender: 'Status' },
+            width: '8%'
           },
           {
             title: '资源使用',
@@ -115,7 +116,8 @@
             title: '引擎版本',
             dataIndex: 'EngineVersion',
             sorter: true,
-            scopedSlots: { customRender: 'EngineVersion' }
+            scopedSlots: { customRender: 'EngineVersion' },
+            width: '10%'
           },
           {
             title: '集群角色',
@@ -127,19 +129,22 @@
             title: 'IP地址',
             dataIndex: 'Addr',
             sorter: true,
-            scopedSlots: { customRender: 'Addr' }
+            scopedSlots: { customRender: 'Addr' },
+            width: '11%'
           },
           {
             title: '更新时间',
             dataIndex: 'UpdatedAt',
             sorter: true,
-            scopedSlots: { customRender: 'UpdatedAt' }
+            scopedSlots: { customRender: 'UpdatedAt' },
+            width: '10%'
           },
           {
             title: '创建时间',
             dataIndex: 'CreatedAt',
             sorter: true,
-            scopedSlots: { customRender: 'CreatedAt' }
+            scopedSlots: { customRender: 'CreatedAt' },
+            width: '10%'
           }
         ],
         selectedRowKeys: [],
@@ -184,30 +189,33 @@
         invokeApi('/swarm/inspect', {}).then(response => {
           if (response.code === 2000) {
             this.inspect = response.data
-            console.log(this.inspect)
           } else {
-            this.globalNotification('error', '标题', '获取集群摘要信息失败')
+            this.$notification.warning({ message: '标题', description: '获取集群摘要信息失败' })
           }
+        }).catch(() => {
+          this.$notification.error({ message: '错误', description: '获取集群摘要信息异常' })
         })
         invokeApi('/docker/version', {}).then(response => {
           if (response.code === 2000) {
             this.version = response.data
-            console.log(this.version)
-            this.swarmOption.details.push({ label: 'Api版本', value: this.version['ApiVersion'] })
+            this.swarmOption.details.push({ label: 'Docker API 版本', value: this.version['ApiVersion'] })
           } else {
-            this.globalNotification('error', '标题', '获取集群版本信息失败')
+            this.$notification.warning({ message: '标题', description: '获取集群版本信息失败' })
           }
+        }).catch(() => {
+          this.$notification.error({ message: '错误', description: '获取集群版本信息异常' })
         })
         invokeApi('/docker/info', {}).then(response => {
           if (response.code === 2000) {
             this.info = response.data
-            console.log(this.info)
             this.swarmOption.details.push({ label: '集群节点数', value: this.info['Swarm']['Nodes'] })
-            this.swarmOption.details.push({ label: '集群CPU总核数', value: this.info['NCPU'] })
-            this.swarmOption.details.push({ label: '集群内存总大小', value: convertSize(this.info['MemTotal'], true, false, 1024) })
+            this.swarmOption.details.push({ label: '集群 CPU 总核数', value: this.info['NCPU'] })
+            this.swarmOption.details.push({ label: '集群内存总容量', value: convertSize(this.info['MemTotal'], true, false, 1000) })
           } else {
-            this.globalNotification('error', '标题', '获取集群详细信息失败')
+            this.$notification.warning({ message: '标题', description: '获取集群详细信息失败' })
           }
+        }).catch(() => {
+          this.$notification.error({ message: '错误', description: '获取集群详细信息异常' })
         })
       },
       loadNodes(params) {
@@ -215,19 +223,13 @@
           if (response.code === 2000) {
             return response.data
           } else {
-            this.globalNotification('error', '标题', '加载数据失败')
+            this.$notification.warning({ message: '标题', description: '加载数据失败' })
           }
         })
       },
       onSelectChange(selectedRowKeys, selectedRows) {
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
-      },
-      globalNotification(type, message, description) {
-        this.$notification[type]({
-          message: message,
-          description: description
-        })
       }
     },
     mounted() {
