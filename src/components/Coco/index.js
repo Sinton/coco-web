@@ -8,6 +8,7 @@ import CocoJsonViewer from './CocoJsonViewer/CocoJsonViewer'
 import CocoChartCard from './CocoCharts/CocoChartCard'
 import CocoArea from './CocoCharts/CocoArea'
 import CocoMultipleArea from './CocoCharts/CocoMultipleArea'
+import CocoCodeMirror from './CocoCodeMirror/CocoCodeMirror'
 import CocoIcon from '@/components/Coco/CocoIcon/CocoIcon'
 import CocoIconSwarm from '@/components/Coco/CocoIcon/CocoIconSwarm'
 import CocoIconKubernetes from '@/components/Coco/CocoIcon/CocoIconKubernetes'
@@ -23,6 +24,7 @@ export {
   CocoChartCard,
   CocoArea,
   CocoMultipleArea,
+  CocoCodeMirror,
   CocoIcon,
   CocoIconSwarm,
   CocoIconKubernetes

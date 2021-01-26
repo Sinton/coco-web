@@ -41,6 +41,7 @@ import {
   CocoChartCard,
   CocoArea,
   CocoMultipleArea,
+  CocoCodeMirror,
   CocoIcon
 } from './Coco/index'
 
@@ -88,5 +89,6 @@ export {
   CocoChartCard,
   CocoArea,
   CocoMultipleArea,
+  CocoCodeMirror,
   CocoIcon
 }
