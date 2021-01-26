@@ -58,7 +58,7 @@
                      icon="plus"
                      size="small"
                      style="margin-right: 5px"
-                     @click="append"/>
+                     @click="append(driverOpts)"/>
           新增存储卷驱动配置
         </a>
       </div>
@@ -148,19 +148,19 @@
           }
         })
       },
-      append() {
+      append(data) {
         const record = {}
         record['editor'] = _.cloneDeep(record)
         record.editable = true
-        this.driverOpts.push(record)
+        data.push(record)
       },
       save(record) {
         record = Object.assign(record, record['editor'])
         record.editable = false
       },
-      remove(record) {
-        const index = this.driverOpts.indexOf(record)
-        this.driverOpts.splice(index, 1)
+      remove(record, data) {
+        const index = data.indexOf(record)
+        data.splice(index, 1)
       }
     }
   }

@@ -15,11 +15,11 @@
                :rowSelection="options.rowSelection">
         <template slot="Name" slot-scope="text">
           <router-link :to="{ path: `volumes/${text}`, params: { volumeName: text } }">
-            {{ text | truncate(40) }}
+            {{ text | truncate(32) }}
           </router-link>
         </template>
-        <template slot="Stack" slot-scope="text, record">{{ record['Labels'] | stackName }}</template>
-        <template slot="Mountpoint" slot-scope="text">{{ text | truncatelr }}</template>
+        <template slot="Stack" slot-scope="text, record">{{ record['Labels'] | stackName | truncate(12) }}</template>
+        <template slot="Mountpoint" slot-scope="text">{{ text | truncatelr(50, 25, 15) }}</template>
         <template slot="CreatedAt" slot-scope="text">{{ text | moment }}</template>
       </s-table>
     </a-card>
@@ -49,7 +49,8 @@
               title: '挂载卷名称',
               dataIndex: 'Name',
               sorter: true,
-              scopedSlots: { customRender: 'Name' }
+              scopedSlots: { customRender: 'Name' },
+              width: 250
             },
             {
               title: '应用栈',
@@ -61,7 +62,8 @@
               title: '挂载卷驱动',
               dataIndex: 'Driver',
               sorter: true,
-              scopedSlots: { customRender: 'Driver' }
+              scopedSlots: { customRender: 'Driver' },
+              width: 110
             },
             {
               title: '宿主机挂载点',
@@ -73,7 +75,8 @@
               title: '创建时间',
               dataIndex: 'CreatedAt',
               sorter: true,
-              scopedSlots: { customRender: 'CreatedAt' }
+              scopedSlots: { customRender: 'CreatedAt' },
+              width: 145
             }
           ],
           data: []
