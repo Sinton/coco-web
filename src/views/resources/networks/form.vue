@@ -61,7 +61,7 @@
                      icon="plus"
                      size="small"
                      style="margin-right: 5px"
-                     @click="append"/>
+                     @click="append(driverOpts)"/>
           新增网络驱动配置
         </a>
       </div>
