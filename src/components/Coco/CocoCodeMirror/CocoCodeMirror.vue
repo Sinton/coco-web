@@ -1,5 +1,15 @@
 <template>
-  <codemirror ref="codemirrorRef" :value="data" :options="cmOptions" @input="input"/>
+  <div>
+    <div style="display: none">
+      <a-select size="small" style="width: 110px" :defaultValue="defaultOptions.mode" @change="onLanguageChange">
+        <a-select-option v-for="language in languages" :key="language">{{ language }}</a-select-option>
+      </a-select>
+      <a-select size="small" style="width: 90px" :defaultValue="defaultOptions.theme" @change="onThemeChange">
+        <a-select-option v-for="theme in themes" :key="theme">{{ theme }}</a-select-option>
+      </a-select>
+    </div>
+    <codemirror ref="codemirrorRef" :value="data" :options="cmOptions" @input="input"/>
+  </div>
 </template>
 
 <script>
@@ -82,47 +92,64 @@
     },
     data() {
       return {
-        cmOptions: {
-          ...this.options,
-          ...{
-            tabSize: 4,
-            smartIndent: true,
-            theme: 'darcula',
-            line: true,
-            lineNumbers: true,
-            fontFamily: 'Cascadia Code',
-            styleSelectedText: true,
-            showCursorWhenSelecting: true,
-            matchBrackets: true,
-            autoCloseBrackets: true,
-            foldCode: true,
-            foldGutter: true,
-            gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-            keyMap: "sublime",
-            extraKeys: { 'Ctrl': 'autocomplete' },
-            hintOptions:{
-              completeSingle: false
-            },
-            // readOnly: 'nocursor'
-          }
-        }
+        defaultOptions: {
+          tabSize: 4,
+          smartIndent: true,
+          theme: 'darcula',
+          mode: 'text',
+          line: true,
+          lineNumbers: true,
+          fontFamily: 'Cascadia Code',
+          styleSelectedText: true,
+          showCursorWhenSelecting: true,
+          matchBrackets: true,
+          autoCloseBrackets: true,
+          foldCode: true,
+          foldGutter: true,
+          gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+          keyMap: "sublime",
+          extraKeys: { 'Ctrl': 'autocomplete' },
+          hintOptions:{
+            completeSingle: false
+          },
+          // readOnly: 'nocursor'
+        },
+        languages: ['javascript', 'go', 'markdown', 'nginx', 'php', 'python', 'sql', 'vue', 'xml', 'yaml'],
+        themes: ['monokai', 'darcula', 'eclipse'],
+        height: 500
       }
     },
     methods: {
       input(code) {
         this.$emit('input', code)
+      },
+      onLanguageChange(language) {
+        this.defaultOptions['mode'] = language
+      },
+      onThemeChange(theme) {
+        this.defaultOptions['theme'] = theme
       }
     },
     computed: {
       data() {
         return this.code
+      },
+      cmOptions() {
+        return {
+          ...this.defaultOptions,
+          ...this.options
+        }
       }
     }
   }
 </script>
 
 <style scoped lang="less">
-/deep/ .CodeMirror {
-  height: 500px;
-}
+  /deep/ .CodeMirror {
+    height: 500px;
+  }
+
+  .ant-select {
+    border-radius: 0;
+  }
 </style>
