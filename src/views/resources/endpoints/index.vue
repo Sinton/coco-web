@@ -19,42 +19,49 @@
             <a-avatar slot="avatar" size="large" shape="square" :src="'https://www.logolynx.com/images/logolynx/b7/b769fa4ba92e48da33e691a69ca62224.png'"/>
             <template slot="title">
               <span style="font-weight: bold; font-size: 1.2em; margin-right: 10px"> {{ record['name'] }}</span>
-              <a-tag color="#52c41a">{{ record['status'] === 1 ? '就绪在线' : '下线' }}</a-tag>
+              <a-icon type="edit"
+                      theme="twoTone"
+                      two-tone-color="#1890ff"
+                      style="margin-right: 10px"
+                      @click="visibleEndpointData('modify', record)"/>
+              <a-tag :color="record['status'] === 1 ? '#52c41a' : '#f5222d'">{{ record['status'] === 1 ? '在线' : '下线' }}</a-tag>
               {{ record['updateDateTime'] | moment }}
             </template>
             <template slot="description">
               <h5>
-                <a-icon type="copy" /> 应用栈 {{ JSON.parse(record['dockerConfig'])['stacks'] }}
+                <a-icon type="copy" /> 应用栈 {{ record['dockerConfig'] ? JSON.parse(record['dockerConfig'])['stacks'] : 0 }}
                 <a-divider type="vertical" />
-                <a-icon type="copy" /> 应用服务 {{ JSON.parse(record['dockerConfig'])['services'] }}
+                <template v-if="record['dockerConfig'] && JSON.parse(record['dockerConfig'])['mode'] === 'cluster'">
+                  <a-icon type="copy" /> 应用服务 {{ record['dockerConfig'] ? JSON.parse(record['dockerConfig'])['services'] : 0 }}
+                  <a-divider type="vertical" />
+                </template>
+                <a-icon type="copy" /> 容器 {{ record['dockerConfig'] ? JSON.parse(record['dockerConfig'])['containers']['total'] : 0 }}-
+                <a-icon type="heart" theme="twoTone" two-tone-color="#52c41a"/> {{ record['dockerConfig'] ? JSON.parse(record['dockerConfig'])['containers']['running'] : 0 }}
+                <a-icon type="heart" theme="twoTone" two-tone-color="#f5222d"/> {{ record['dockerConfig'] ? JSON.parse(record['dockerConfig'])['containers']['stoped'] : 0 }}
                 <a-divider type="vertical" />
-                <a-icon type="copy" /> 容器 {{ JSON.parse(record['dockerConfig'])['containers']['total'] }}-
-                <a-icon type="heart" theme="twoTone" two-tone-color="#52c41a"/> {{ JSON.parse(record['dockerConfig'])['containers']['running'] }}
-                <a-icon type="heart" theme="twoTone" two-tone-color="#f5222d"/> {{ JSON.parse(record['dockerConfig'])['containers']['stoped'] }}
+                <a-icon type="copy" /> 镜像 {{ record['dockerConfig'] ? JSON.parse(record['dockerConfig'])['images']['total'] : 0 }}
                 <a-divider type="vertical" />
-                <a-icon type="copy" /> 镜像 {{ JSON.parse(record['dockerConfig'])['images']['total'] }}
+                <a-icon type="copy" /> 存储卷 {{ record['dockerConfig'] ? JSON.parse(record['dockerConfig'])['volumes'] : 0 }}
                 <a-divider type="vertical" />
-                <a-icon type="copy" /> 存储卷 {{ JSON.parse(record['dockerConfig'])['volumes'] }}
-                <a-divider type="vertical" />
-                <a-icon type="copy" /> 网络 {{ JSON.parse(record['dockerConfig'])['networks'] }}
+                <a-icon type="copy" /> 网络 {{ record['dockerConfig'] ? JSON.parse(record['dockerConfig'])['networks'] : 0 }}
               </h5>
-              <a-icon type="copy" /> {{ JSON.parse(record['resources'])['cpus'] }}
+              <a-icon type="copy" /> {{ record['dockerConfig'] ? JSON.parse(record['resources'])['cpus'] : 0 }}
               <a-divider type="vertical" />
-              <a-icon type="copy" /> {{ JSON.parse(record['resources'])['memory'] }}
+              <a-icon type="copy" /> {{ record['dockerConfig'] ? JSON.parse(record['resources'])['memory'] : 0 }}
             </template>
           </a-list-item-meta>
           <template slot="actions">
             <a-avatar :style="{ backgroundColor: record['id'] === selectedEndpoint ? '#52c41a' : '#f56a00'}"
-                      @click="switchEndpoint(record['id'])">
+                      @click="switchEndpoint(record)">
               {{ record['id'] === selectedEndpoint ? '使用' : '未用' }}
             </a-avatar>
           </template>
           <div slot="extra">
             <span style="color: #00000073;">{{ record['endpointUrl'] }}</span>
             <a-divider type="vertical" />
-            <span style="color: #00000073;">{{ JSON.parse(record['dockerConfig'])['cluster'] }}</span>
+            <span style="color: #00000073;">{{ record['dockerConfig'] && JSON.parse(record['dockerConfig'])['mode'] | mode }}</span>
             <a-divider type="vertical" />
-            <span style="color: #00000073;">{{ JSON.parse(record['dockerConfig'])['version'] }}</span>
+            <span style="color: #00000073;">{{ record['dockerConfig'] ? JSON.parse(record['dockerConfig'])['version'] : '未知' }}</span>
           </div>
         </a-list-item>
       </a-list>
@@ -74,7 +81,7 @@
           </a-tooltip>
         </template>
         <template slot="status" slot-scope="text, record">
-          <a-badge :color="record['status'] === 1 ? '#52c41a' : '#f5222d'" :text="record['status'] === 1 ? '就绪在线' : '下线'"/>
+          <a-badge :color="record['status'] === 1 ? '#52c41a' : '#f5222d'" :text="record['status'] === 1 ? '在线' : '下线'"/>
         </template>
         <template slot="action" slot-scope="text, record">
           <a @click="visibleEndpointData('modify', record)">修改</a>
@@ -82,9 +89,10 @@
       </s-table>
     </a-card>
     <endpoint-form :visible="visible"
+                   :operate-type="operateType"
                    :data="endpointData"
                    @on-close="() => this.visible = false"
-                   @added="() => this.$refs['endpointsRef'].refresh()"/>
+                   @submitted="submitted"/>
   </page-view>
 </template>
 
@@ -101,6 +109,11 @@
       EndpointForm,
       PageView,
       STable
+    },
+    filters: {
+      mode(type) {
+        return type === 'standalone' ? '单点' : 'Swarm集群'
+      }
     },
     data() {
       return {
@@ -144,6 +157,7 @@
           }
         },
         visible: false,
+        operateType: 'add',
         endpoints: [],
         endpointData: {}
       }
@@ -160,10 +174,16 @@
       },
       visibleEndpointData(operateType, endpoint) {
         this.visible = true
-        if (operateType === 'add') {
-          this.endpointData = null
-        } else {
-          this.endpointData = endpoint
+        this.operateType = operateType
+        switch (operateType) {
+          case 'add':
+            this.endpointData = null
+            break
+          case 'modify':
+            this.endpointData = endpoint
+            break
+          default:
+            break
         }
       },
       removeEndpoints() {
@@ -174,6 +194,8 @@
           invokeApi('/endpoint/remove', params).then(response => {
             if (response.code === 2000) {
               this.$notification.success({ message: '成功', description: response.data })
+              this.selectedRows = []
+              this.selectedRowKeys = []
               this.$refs['endpointsRef'].selectedRowKeys = []
               this.$refs['endpointsRef'].selectedRows = []
             } else {
@@ -186,21 +208,29 @@
           })
         })
       },
-      switchEndpoint(endpointId) {
-        const params = {
-          id: endpointId
+      switchEndpoint(endpoint) {
+        if (endpoint['status'] === 1) {
+          const params = {
+            id: endpoint['id']
+          }
+          invokeApi('/endpoint/switch', params).then(response => {
+            this.$store.dispatch('SwitchEndpoint', endpoint['id'])
+          }).catch(() => {
+            this.$notification.error({ message: '标题', description: '切换服务终端失败' })
+          })
+        } else {
+          this.$notification.warning({ message: '警告', description: '未上线的服务终端无法进行切换' })
         }
-        invokeApi('/endpoint/switch', params).then(response => {
-          console.log(response)
-          this.$store.dispatch('SwitchEndpoint', endpointId)
-        }).catch(() => {
-          this.$notification.error({ message: '标题', description: '切换服务终端失败' })
-        })
       },
       loadEndpoints() {
         return invokeApi('/endpoint/list', {}).then(response => {
           if (response.code === 2000) {
-            this.endpoints = response.data.data
+            this.endpoints = response.data.data.map(item => {
+              if (item['dockerConfig'] === '0') {
+                item['dockerConfig'] = null
+              }
+              return item
+            })
             return response.data
           } else {
             this.$notification.warning({ message: '标题', description: '加载数据失败' })
@@ -208,6 +238,12 @@
         }).catch(() => {
           this.$notification.error({ message: '标题', description: '加载数据失败' })
         })
+      },
+      submitted() {
+        if (this.displayMode === 'table') {
+          this.$refs['endpointsRef'].refresh()
+        }
+        this.loadEndpoints()
       }
     },
     mounted() {

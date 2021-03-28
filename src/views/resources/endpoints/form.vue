@@ -1,5 +1,5 @@
 <template>
-  <a-drawer title="新增服务终端"
+  <a-drawer :title="title"
             :width="730"
             :visible="visible"
             :get-container="false"
@@ -14,23 +14,23 @@
         </a-col>
         <a-col :span="24">
           <a-form-item label="终端URL" v-bind="formItemLayout">
-            <a-input v-decorator="['url',{rules: [{ required: true, message: '请输入终端URL' }]}]"
+            <a-input v-decorator="['endpointUrl',{rules: [{ required: true, message: '请输入终端URL' }]}]"
                      placeholder="例如：10.0.0.10:2375 or mydocker.mydomain.com:2375"/>
           </a-form-item>
         </a-col>
         <a-col :span="24">
           <a-form-item label="IP" v-bind="formItemLayout">
-            <a-input v-decorator="['ip',{rules: [{ required: true, message: '请输入终端IP' }]}]"
+            <a-input v-decorator="['publicIp',{rules: [{ required: true, message: '请输入终端IP' }]}]"
                      placeholder="例如：10.0.0.10 or mydocker.mydomain.com"/>
           </a-form-item>
         </a-col>
         <a-col :span="24">
           <a-form-item label="启用TLS" v-bind="formItemLayout">
-            <a-switch v-decorator="['tls', {initialValue: false}]"
+            <a-switch v-decorator="['tlsEnable', {initialValue: false}]"
                       checked-children="开"
                       un-checked-children="关">
             </a-switch>
-            <template v-if="endpointForm.getFieldValue('tls')">
+            <template v-if="endpointForm.getFieldValue('tlsEnable')">
               <a-divider orientation="left">TLS 模式</a-divider>
               <p>可以在<a href="https://docs.docker.com/engine/security/https/" target="_blank">Docker文档</a>中找到有关如何使用TLS保护Docker环境的更多信息</p>
               <a-radio-group v-model="tlsMode" default-value="cs">
@@ -82,6 +82,10 @@
         type: Boolean,
         default: false
       },
+      operateType: {
+        type: String,
+        default: 'add'
+      },
       data: {
         type: Object,
         default: () => {}
@@ -107,23 +111,38 @@
       saveOrUpdateEndpoint() {
         this.endpointForm.validateFields((errors, fieldsValue) => {
           if (!errors) {
-            invokeApi('/endpoint/create', fieldsValue).then(response => {
+            const apiTarget = this.operateType === 'add' ? 'create' : 'modify'
+            const responseTip = this.operateType === 'add' ? '创建' : '修改'
+            if (fieldsValue['tlsEnable']) {
+              fieldsValue['tlsEnable'] = 1
+            } else {
+              fieldsValue['tlsEnable'] = 0
+            }
+            if (!_.isEmpty(this.data) && _.isNumber(this.data.id)) {
+              fieldsValue = { ...fieldsValue, ...{ id: this.data.id } }
+            }
+            invokeApi(`/endpoint/${apiTarget}`, fieldsValue).then(response => {
               if (response.code === 2000) {
-                this.$notification.success({ message: '成功', description: '创建服务终端成功' })
+                this.$notification.success({ message: '成功', description: `${responseTip}服务终端成功` })
                 this.endpointForm.resetFields()
-                this.$emit('added')
+                this.$emit('submitted')
                 this.onClose()
               } else {
                 this.$notification.warning({ message: '标题', description: response.data })
               }
             }).catch(() => {
-              this.$notification.error({ message: '标题', description: '创建服务终端发生异常' })
+              this.$notification.error({ message: '标题', description: `${responseTip}服务终端发生异常` })
             })
           }
         })
       },
       onClose() {
         this.$emit('on-close')
+      }
+    },
+    computed: {
+      title() {
+        return this.operateType === 'add' ? '新增服务终端' : '修改服务终端'
       }
     },
     watch: {
@@ -134,9 +153,9 @@
           } else {
             this.endpointForm.setFieldsValue({
               name: this.data['name'],
-              url: this.data['endpointUrl'],
-              ip: this.data['publicIp'],
-              tls: this.data['tlsEnable'] === 1
+              endpointUrl: this.data['endpointUrl'],
+              publicIp: this.data['publicIp'],
+              tlsEnable: this.data['tlsEnable'] === 1
             })
           }
         }
