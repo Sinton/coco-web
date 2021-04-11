@@ -50,7 +50,18 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  return response.data
+  if (response.data.code === 9026) {
+    const token = Vue.ls.get(ACCESS_TOKEN)
+    if (token) {
+      store.dispatch('Logout').then(() => {
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
+      })
+    }
+  } else {
+    return response.data
+  }
 }, err)
 
 const installer = {
