@@ -124,9 +124,7 @@
         configContent: '',
         creating: false,
         creatingText: '创建',
-        cmOptions: {
-          mode: 'text/javascript'
-        }
+        cmOptions: {}
       }
     },
     methods: {
