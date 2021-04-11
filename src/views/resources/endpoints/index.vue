@@ -1,19 +1,20 @@
 <template>
   <page-view>
     <a-card :title="'终端列表'" :bordered="false">
-      <div slot="extra">
-        <a-button-group>
-          <a-button icon="table" @click="displayMode = 'table'"/>
-          <a-button icon="profile" @click="displayMode = 'list'"/>
-        </a-button-group>
-      </div>
       <div class="table-operator">
         <a-button icon="reload" @click="loadEndpoints">刷新</a-button>
-        <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeEndpoints">删除</a-button>
-        <a-button type="primary" icon="plus" @click="visibleEndpointData('add')">添加新终端</a-button>
       </div>
 
-      <a-list v-if="displayMode === 'list'" :item-layout="'horizontal'" :bordered="true" :data-source="endpoints">
+      <div class="operate">
+        <a-button type="dashed"
+                  icon="plus"
+                  style="width: 100%; margin-bottom: 10px"
+                  @click="visibleEndpointData('add')">
+          添加新终端
+        </a-button>
+      </div>
+
+      <a-list :item-layout="'horizontal'" :bordered="true" :data-source="endpoints" :loading="loadingData">
         <a-list-item slot="renderItem" slot-scope="record">
           <a-list-item-meta>
             <a-avatar slot="avatar" size="large" shape="square" :src="'https://www.logolynx.com/images/logolynx/b7/b769fa4ba92e48da33e691a69ca62224.png'"/>
@@ -24,6 +25,11 @@
                       two-tone-color="#1890ff"
                       style="margin-right: 10px"
                       @click="visibleEndpointData('modify', record)"/>
+              <a-icon type="delete"
+                      theme="twoTone"
+                      two-tone-color="#ff4d4f"
+                      style="margin-right: 10px"
+                      @click="removeEndpoints(record)"/>
               <a-tag :color="record['status'] === 1 ? '#52c41a' : '#f5222d'">{{ record['status'] === 1 ? '在线' : '下线' }}</a-tag>
               {{ record['updateDateTime'] | moment }}
             </template>
@@ -65,28 +71,6 @@
           </div>
         </a-list-item>
       </a-list>
-      <s-table v-else-if="displayMode === 'table'"
-               ref="endpointsRef"
-               :rowKey="record => record['id']"
-               size="middle"
-               :columns="columns"
-               :data="loadEndpoints"
-               :alert="options.alert"
-               :rowSelection="options.rowSelection">
-        <template slot="id" slot-scope="text, record">
-          {{ record['name'] }}
-          <a-tooltip placement="right">
-            <a-icon type="info-circle"/>
-            <template slot="title">服务终端ID: {{ text }}</template>
-          </a-tooltip>
-        </template>
-        <template slot="status" slot-scope="text, record">
-          <a-badge :color="record['status'] === 1 ? '#52c41a' : '#f5222d'" :text="record['status'] === 1 ? '在线' : '下线'"/>
-        </template>
-        <template slot="action" slot-scope="text, record">
-          <a @click="visibleEndpointData('modify', record)">修改</a>
-        </template>
-      </s-table>
     </a-card>
     <endpoint-form :visible="visible"
                    :operate-type="operateType"
@@ -117,49 +101,11 @@
     },
     data() {
       return {
-        displayMode: 'list',
-        columns: [
-          {
-            title: '服务终端名称/ID',
-            dataIndex: 'id',
-            scopedSlots: { customRender: 'id' },
-            ellipsis: true
-          },
-          {
-            title: '状态',
-            dataIndex: 'status',
-            scopedSlots: { customRender: 'status' },
-            ellipsis: true
-          },
-          {
-            title: 'URL',
-            dataIndex: 'endpointUrl',
-            scopedSlots: { customRender: 'endpointUrl' },
-            ellipsis: true
-          },
-          {
-            title: '操作',
-            dataIndex: 'action',
-            scopedSlots: { customRender: 'action' },
-            width: 80
-          }
-        ],
-        selectedRowKeys: [],
-        selectedRows: [],
-
-        // custom table alert & rowSelection
-        options: {
-          alert: { show: true, clear: () => { this.selectedRowKeys = [] } },
-          rowSelection: {
-            selectedRows: this.selectedRows,
-            selectedRowKeys: this.selectedRowKeys,
-            onChange: this.onSelectChange
-          }
-        },
         visible: false,
         operateType: 'add',
         endpoints: [],
-        endpointData: {}
+        endpointData: {},
+        loadingData: false
       }
     },
     computed: {
@@ -168,10 +114,6 @@
       })
     },
     methods: {
-      onSelectChange(selectedRowKeys, selectedRows) {
-        this.selectedRowKeys = selectedRowKeys
-        this.selectedRows = selectedRows
-      },
       visibleEndpointData(operateType, endpoint) {
         this.visible = true
         this.operateType = operateType
@@ -186,26 +128,17 @@
             break
         }
       },
-      removeEndpoints() {
-        this.selectedRows.forEach(item => {
-          const params = {
-            id: item.id
+      removeEndpoints(endpoints) {
+        invokeApi('/endpoint/remove', endpoints).then(response => {
+          if (response.code === 2000) {
+            this.$notification.success({ message: '成功', description: response.data })
+          } else {
+            this.$notification.warning({ message: '失败', description: response.data })
           }
-          invokeApi('/endpoint/remove', params).then(response => {
-            if (response.code === 2000) {
-              this.$notification.success({ message: '成功', description: response.data })
-              this.selectedRows = []
-              this.selectedRowKeys = []
-              this.$refs['endpointsRef'].selectedRowKeys = []
-              this.$refs['endpointsRef'].selectedRows = []
-            } else {
-              this.$notification.warning({ message: '失败', description: response.data })
-            }
-          }).catch((error) => {
-            this.$notification.error({ message: '错误', description: error })
-          }).finally(() => {
-            this.$refs['endpointsRef'].refresh()
-          })
+        }).catch((error) => {
+          this.$notification.error({ message: '错误', description: error })
+        }).finally(() => {
+          this.loadEndpoints()
         })
       },
       switchEndpoint(endpoint) {
@@ -214,7 +147,7 @@
             id: endpoint['id']
           }
           invokeApi('/endpoint/switch', params).then(response => {
-            this.$store.dispatch('SwitchEndpoint', endpoint['id'])
+            this.$store.commit('SWITCH_ENDPOINT', endpoint['id'])
           }).catch(() => {
             this.$notification.error({ message: '标题', description: '切换服务终端失败' })
           })
@@ -223,6 +156,7 @@
         }
       },
       loadEndpoints() {
+        this.loadingData = true
         return invokeApi('/endpoint/list', {}).then(response => {
           if (response.code === 2000) {
             this.endpoints = response.data.data.map(item => {
@@ -231,6 +165,7 @@
               }
               return item
             })
+            this.loadingData = false
             return response.data
           } else {
             this.$notification.warning({ message: '标题', description: '加载数据失败' })
@@ -240,9 +175,6 @@
         })
       },
       submitted() {
-        if (this.displayMode === 'table') {
-          this.$refs['endpointsRef'].refresh()
-        }
         this.loadEndpoints()
       }
     },

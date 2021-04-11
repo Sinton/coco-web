@@ -9,18 +9,21 @@
         <a-col :span="24">
           <a-form-item label="终端名称" v-bind="formItemLayout">
             <a-input v-decorator="['name',{rules: [{ required: true, message: '请输入终端名称' }]}]"
+                     :allow-clear="true"
                      placeholder="例如：docker-prod01"/>
           </a-form-item>
         </a-col>
         <a-col :span="24">
           <a-form-item label="终端URL" v-bind="formItemLayout">
             <a-input v-decorator="['endpointUrl',{rules: [{ required: true, message: '请输入终端URL' }]}]"
+                     :allow-clear="true"
                      placeholder="例如：10.0.0.10:2375 or mydocker.mydomain.com:2375"/>
           </a-form-item>
         </a-col>
         <a-col :span="24">
           <a-form-item label="IP" v-bind="formItemLayout">
             <a-input v-decorator="['publicIp',{rules: [{ required: true, message: '请输入终端IP' }]}]"
+                     :allow-clear="true"
                      placeholder="例如：10.0.0.10 or mydocker.mydomain.com"/>
           </a-form-item>
         </a-col>
@@ -67,7 +70,7 @@
     </a-form>
     <div :style="{position: 'absolute', right: 0, bottom: 0, width: '100%', borderTop: '1px solid #e9e9e9', padding: '10px 16px', background: '#fff', textAlign: 'right',zIndex: 1}">
       <a-button :style="{ marginRight: '8px' }" @click="onClose">取消</a-button>
-      <a-button type="primary" @click="saveOrUpdateEndpoint">提交</a-button>
+      <a-button type="primary" @click="saveOrUpdateEndpoint" :loading="submitting">{{ submittingText }}</a-button>
     </div>
   </a-drawer>
 </template>
@@ -104,7 +107,9 @@
             sm: { span: 21 }
           }
         },
-        tlsMode: 'cs'
+        tlsMode: 'cs',
+        submitting: false,
+        submittingText: '提交'
       }
     },
     methods: {
@@ -121,6 +126,8 @@
             if (!_.isEmpty(this.data) && _.isNumber(this.data.id)) {
               fieldsValue = { ...fieldsValue, ...{ id: this.data.id } }
             }
+            this.submitting = true
+            this.submittingText = '提交中'
             invokeApi(`/endpoint/${apiTarget}`, fieldsValue).then(response => {
               if (response.code === 2000) {
                 this.$notification.success({ message: '成功', description: `${responseTip}服务终端成功` })
@@ -132,6 +139,9 @@
               }
             }).catch(() => {
               this.$notification.error({ message: '标题', description: `${responseTip}服务终端发生异常` })
+            }).finally(() => {
+              this.submitting = false
+              this.submittingText = '提交'
             })
           }
         })
