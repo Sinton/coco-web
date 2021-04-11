@@ -88,7 +88,7 @@
                :data="loadImageHistory"
                :showPagination="false">
         <template slot="No" slot-scope="text, record, index">
-          {{ index }}
+          {{ index + 1 }}
         </template>
         <template slot="Created" slot-scope="text">
           {{ text * 1000 | moment }}
@@ -136,6 +136,7 @@
           columns: [
             {
               title: '#',
+              sorter: true,
               scopedSlots: { customRender: 'No' },
               width: 40
             },
@@ -158,7 +159,6 @@
             {
               title: '文件层',
               dataIndex: 'CreatedBy',
-              sorter: true,
               scopedSlots: { customRender: 'CreatedBy' },
               ellipsis: true
             }
