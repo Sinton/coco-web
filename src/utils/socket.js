@@ -10,7 +10,8 @@ export function socketConnect() {
       debug: !(process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true'),
       connection: 'http://localhost:9099',
       options: {
-        query: authenticate
+        query: authenticate,
+        reconnectionAttempts: 3
       }
     }))
   }
