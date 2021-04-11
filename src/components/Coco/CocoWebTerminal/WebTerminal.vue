@@ -56,7 +56,7 @@
       },
       extendParams: {
         type: Object,
-        default: {}
+        default: () => {}
       }
     },
     data() {
