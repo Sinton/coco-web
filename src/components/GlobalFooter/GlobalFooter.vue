@@ -1,7 +1,7 @@
 <template>
   <div class="footer">
     <div class="links">
-      <a href="https://pro.loacg.com/" target="_blank">Pro 首页</a>
+      <a href="https://pro.antdv.com/" target="_blank">Pro 首页</a>
       <a href="https://github.com/Sinton/coco-web" target="_blank">
         <a-icon type="github" />
       </a>

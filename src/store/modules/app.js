@@ -120,9 +120,6 @@ const app = {
     },
     ToggleMultiTab ({ commit }, bool) {
       commit('TOGGLE_MULTI_TAB', bool)
-    },
-    SwitchEndpoint ({ commit }, endpoint) {
-      commit('SWITCH_ENDPOINT', endpoint)
     }
   }
 }
