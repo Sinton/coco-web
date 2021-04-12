@@ -3,6 +3,7 @@
             :width="730"
             :visible="visible"
             :get-container="false"
+            :mask-closable="false"
             @close="onClose">
     <a-form :form="endpointForm">
       <a-row :gutter="16">
@@ -29,10 +30,7 @@
         </a-col>
         <a-col :span="24">
           <a-form-item label="启用TLS" v-bind="formItemLayout">
-            <a-switch v-decorator="['tlsEnable', {initialValue: false}]"
-                      checked-children="开"
-                      un-checked-children="关">
-            </a-switch>
+            <a-switch v-decorator="['tlsEnable', {initialValue: false}]" checked-children="开" un-checked-children="关"/>
             <template v-if="endpointForm.getFieldValue('tlsEnable')">
               <a-divider orientation="left">TLS 模式</a-divider>
               <p>可以在<a href="https://docs.docker.com/engine/security/https/" target="_blank">Docker文档</a>中找到有关如何使用TLS保护Docker环境的更多信息</p>

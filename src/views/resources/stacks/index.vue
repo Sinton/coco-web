@@ -35,10 +35,7 @@
           </a-list-item>
         </template>
         <template slot="internal" slot-scope="text">
-          <a-switch :default-checked="text === 1"
-                    :disabled="true"
-                    checkedChildren="是"
-                    unCheckedChildren="否"/>
+          {{ text | whether }}
         </template>
         <template slot="type" slot-scope="text">
           {{ text === 1 ? 'Compose' : 'Swarm' }}
@@ -103,7 +100,7 @@
             },
             getCheckboxProps: record => ({
               props: {
-                disabled: record.internal === 0
+                disabled: record['internal'] === 0
               }
             })
           }

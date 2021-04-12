@@ -3,6 +3,7 @@
             :width="730"
             :visible="visible"
             :get-container="false"
+            :mask-closable="false"
             @close="onClose">
     <a-form :form="networkForm">
       <a-row :gutter="16">
@@ -46,12 +47,12 @@
           <span v-if="record.editable">
             <a @click="() => save(record)">保存</a>
             <a-divider type="vertical"/>
-            <a @click="() => remove(record)">取消</a>
+            <a @click="() => remove(record, driverOpts)">取消</a>
           </span>
           <span v-else>
             <a @click="() => record.editable = true">修改</a>
             <a-divider type="vertical"/>
-            <a @click="() => remove(record)">移除</a>
+            <a @click="() => remove(record, driverOpts)">移除</a>
           </span>
         </div>
       </template>

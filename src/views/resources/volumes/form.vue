@@ -3,6 +3,7 @@
             :width="730"
             :visible="visible"
             :get-container="false"
+            :mask-closable="false"
             @close="onClose">
     <a-form :form="volumeForm">
       <a-row :gutter="16">
