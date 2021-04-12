@@ -27,7 +27,7 @@
     dragClass: 'dragable-drag'
   }
   export default {
-    name: 'KanbanGroup',
+    name: 'CocoKanbanGroup',
     components: { Draggable },
     props: {
       title: {

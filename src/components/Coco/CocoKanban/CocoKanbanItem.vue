@@ -6,7 +6,7 @@
 
 <script>
   export default {
-    name: 'KanbanItem',
+    name: 'CocoKanbanItem',
     props: {
       content: {
         type: String,
