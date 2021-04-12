@@ -156,7 +156,10 @@
           rowSelection: {
             selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
-            onChange: this.onSelectChange
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.selectedRowKeys = selectedRowKeys
+              this.selectedRows = selectedRows
+            }
           }
         }
       }
@@ -226,10 +229,6 @@
             this.$notification.warning({ message: '标题', description: '加载数据失败' })
           }
         })
-      },
-      onSelectChange(selectedRowKeys, selectedRows) {
-        this.selectedRowKeys = selectedRowKeys
-        this.selectedRows = selectedRows
       }
     },
     mounted() {

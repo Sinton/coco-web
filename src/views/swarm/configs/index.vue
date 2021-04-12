@@ -109,7 +109,10 @@
           rowSelection: {
             selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
-            onChange: this.onSelectChange
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.selectedRowKeys = selectedRowKeys
+              this.selectedRows = selectedRows
+            }
           }
         },
         visible: false,
@@ -170,10 +173,6 @@
             this.$refs['configsRef'].refresh()
           })
         })
-      },
-      onSelectChange(selectedRowKeys, selectedRows) {
-        this.selectedRowKeys = selectedRowKeys
-        this.selectedRows = selectedRows
       }
     },
     beforeCreate() {

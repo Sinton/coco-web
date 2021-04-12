@@ -87,7 +87,10 @@
           rowSelection: {
             selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
-            onChange: this.onSelectChange
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.selectedRowKeys = selectedRowKeys
+              this.selectedRows = selectedRows
+            }
           }
         }
       }

@@ -64,7 +64,6 @@
     },
     data() {
       return {
-        queryParam: [],
         columns: [
           {
             title: '网络名称',
@@ -137,7 +136,15 @@
           rowSelection: {
             selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
-            onChange: this.onSelectChange
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.selectedRowKeys = selectedRowKeys
+              this.selectedRows = selectedRows
+            },
+            getCheckboxProps: record => ({
+              props: {
+                disabled: ['host', 'none', 'bridge'].includes(record['Name'])
+              }
+            })
           }
         },
         visible: false
@@ -184,17 +191,13 @@
         })
       },
       loadNetworks(params) {
-        return invokeApi('/network/list', { ...params, ...this.queryParam }).then(response => {
+        return invokeApi('/network/list', params).then(response => {
           if (response.code === 2000) {
             return response.data
           } else {
             this.$notification.error({ message: '标题', description: '加载数据失败' })
           }
         })
-      },
-      onSelectChange(selectedRowKeys, selectedRows) {
-        this.selectedRowKeys = selectedRowKeys
-        this.selectedRows = selectedRows
       }
     }
   }

@@ -152,7 +152,10 @@
           rowSelection: {
             selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
-            onChange: this.onSelectChange
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.selectedRowKeys = selectedRowKeys
+              this.selectedRows = selectedRows
+            }
           }
         },
         pullImageForm: this.$form.createForm(this),
@@ -211,10 +214,6 @@
             this.$notification.error({ message: '标题', description: '加载数据失败' })
           }
         })
-      },
-      onSelectChange(selectedRowKeys, selectedRows) {
-        this.selectedRowKeys = selectedRowKeys
-        this.selectedRows = selectedRows
       },
       inspectImage(imageId) {
         const params = {
