@@ -59,9 +59,13 @@ Vue.filter('truncatelr', (text, max, left, right) => {
   }
 })
 
-Vue.filter('whether', (bool) => {
-  if (typeof bool === 'boolean') {
-    return bool ? '是' : '否'
+Vue.filter('whether', (value) => {
+  switch (typeof value) {
+    case 'boolean':
+      return value ? '是' : '否'
+    case 'number':
+      return value === 1 ? '是' : '否'
+    default:
+      return value
   }
-  return bool
 })
