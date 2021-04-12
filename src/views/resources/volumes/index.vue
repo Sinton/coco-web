@@ -9,7 +9,7 @@
       <s-table ref="volumesRef"
                :rowKey="record => record['Name']"
                size="middle"
-               :columns="volumesOption.columns"
+               :columns="columns"
                :data="loadVolumes"
                :alert="options.alert"
                :rowSelection="options.rowSelection">
@@ -17,6 +17,7 @@
           <router-link :to="{ path: `volumes/${text}`, params: { volumeName: text } }">
             {{ text | truncate(32) }}
           </router-link>
+          <a-tag v-if="unusedVolumes.includes(text)" color="#faad14">未被使用</a-tag>
         </template>
         <template slot="Stack" slot-scope="text, record">{{ record['Labels'] | stackName | truncate(12) }}</template>
         <template slot="Mountpoint" slot-scope="text">{{ text | truncatelr(50, 25, 15) }}</template>
@@ -42,45 +43,41 @@
     },
     data() {
       return {
-        queryParam: [],
-        volumesOption: {
-          columns: [
-            {
-              title: '挂载卷名称',
-              dataIndex: 'Name',
-              sorter: true,
-              scopedSlots: { customRender: 'Name' },
-              width: 250
-            },
-            {
-              title: '应用栈',
-              dataIndex: 'Stack',
-              sorter: true,
-              scopedSlots: { customRender: 'Stack' }
-            },
-            {
-              title: '挂载卷驱动',
-              dataIndex: 'Driver',
-              sorter: true,
-              scopedSlots: { customRender: 'Driver' },
-              width: 110
-            },
-            {
-              title: '宿主机挂载点',
-              dataIndex: 'Mountpoint',
-              sorter: true,
-              scopedSlots: { customRender: 'Mountpoint' }
-            },
-            {
-              title: '创建时间',
-              dataIndex: 'CreatedAt',
-              sorter: true,
-              scopedSlots: { customRender: 'CreatedAt' },
-              width: 145
-            }
-          ],
-          data: []
-        },
+        columns: [
+          {
+            title: '挂载卷名称',
+            dataIndex: 'Name',
+            sorter: true,
+            scopedSlots: { customRender: 'Name' },
+            width: 250
+          },
+          {
+            title: '应用栈',
+            dataIndex: 'Stack',
+            sorter: true,
+            scopedSlots: { customRender: 'Stack' }
+          },
+          {
+            title: '挂载卷驱动',
+            dataIndex: 'Driver',
+            sorter: true,
+            scopedSlots: { customRender: 'Driver' },
+            width: 110
+          },
+          {
+            title: '宿主机挂载点',
+            dataIndex: 'Mountpoint',
+            sorter: true,
+            scopedSlots: { customRender: 'Mountpoint' }
+          },
+          {
+            title: '创建时间',
+            dataIndex: 'CreatedAt',
+            sorter: true,
+            scopedSlots: { customRender: 'CreatedAt' },
+            width: 145
+          }
+        ],
         selectedRowKeys: [],
         selectedRows: [],
         // custom table alert & rowSelection
@@ -89,10 +86,14 @@
           rowSelection: {
             selectedRows: this.selectedRows,
             selectedRowKeys: this.selectedRowKeys,
-            onChange: this.onSelectChange
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.selectedRowKeys = selectedRowKeys
+              this.selectedRows = selectedRows
+            }
           }
         },
-        visible: false
+        visible: false,
+        unusedVolumes: []
       }
     },
     filters: {
@@ -108,9 +109,22 @@
     },
     methods: {
       loadVolumes(params) {
-        return invokeApi('/volume/list', { ...params, ...this.queryParam }).then(response => {
+        this.loadUnusedVolumes()
+        return invokeApi('/volume/list', params).then(response => {
           if (response.code === 2000) {
             return response.data
+          } else {
+            this.$notification.error({ message: '标题', description: '加载数据失败' })
+          }
+        })
+      },
+      loadUnusedVolumes() {
+        const params = {
+          filter: { dangling: true }
+        }
+        invokeApi('/volume/list', params).then(response => {
+          if (response.code === 2000) {
+            this.unusedVolumes = response.data.data.map(item => item.Name)
           } else {
             this.$notification.error({ message: '标题', description: '加载数据失败' })
           }
@@ -137,10 +151,6 @@
             this.$refs['volumesRef'].refresh()
           })
         })
-      },
-      onSelectChange(selectedRowKeys, selectedRows) {
-        this.selectedRowKeys = selectedRowKeys
-        this.selectedRows = selectedRows
       }
     }
   }

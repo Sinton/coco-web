@@ -8,7 +8,12 @@
       </detail-list-item>
     </detail-list>
     <template slot="headerContent">
-      <a-button icon="delete" type="link" @click="removeNetwork">移除</a-button>
+      <a-button icon="delete"
+                type="link"
+                :disabled="['host', 'none', 'bridge'].includes(this.networkInspect && this.networkInspect['Name'])"
+                @click="removeNetwork">
+        移除
+      </a-button>
     </template>
 
     <a-card v-if="detailsOption.options.length > 0" :title="'网络配置项'" :bordered="false" style="margin-bottom: 20px;">
