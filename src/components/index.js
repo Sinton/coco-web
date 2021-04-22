@@ -42,6 +42,7 @@ import {
   CocoArea,
   CocoMultipleArea,
   CocoCodeMirror,
+  CocoEditorTable,
   CocoKanbanGroup,
   CocoKanbanItem,
   CocoIcon
@@ -92,6 +93,7 @@ export {
   CocoArea,
   CocoMultipleArea,
   CocoCodeMirror,
+  CocoEditorTable,
   CocoKanbanGroup,
   CocoKanbanItem,
   CocoIcon

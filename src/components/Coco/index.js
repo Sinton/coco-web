@@ -9,6 +9,7 @@ import CocoChartCard from './CocoCharts/CocoChartCard'
 import CocoArea from './CocoCharts/CocoArea'
 import CocoMultipleArea from './CocoCharts/CocoMultipleArea'
 import CocoCodeMirror from './CocoCodeMirror/CocoCodeMirror'
+import CocoEditorTable from './CocoEditorTable/CocoEditorTable'
 import CocoKanbanGroup from './CocoKanban/CocoKanbanGroup'
 import CocoKanbanItem from './CocoKanban/CocoKanbanItem'
 import CocoIcon from '@/components/Coco/CocoIcon/CocoIcon'
@@ -27,6 +28,7 @@ export {
   CocoArea,
   CocoMultipleArea,
   CocoCodeMirror,
+  CocoEditorTable,
   CocoKanbanGroup,
   CocoKanbanItem,
   CocoIcon,
