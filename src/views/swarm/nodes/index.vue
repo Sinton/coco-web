@@ -9,12 +9,6 @@
       <a-button type="link" icon="codepen">集群可视化</a-button>
     </detail-list>
     <a-card :title="'集群节点列表'" :bordered="false">
-      <div slot="extra">
-        <a-button-group>
-          <a-button icon="table"/>
-          <a-button icon="profile"/>
-        </a-button-group>
-      </div>
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['nodesRef'].refresh()" >刷新</a-button>
         <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0">删除</a-button>
@@ -28,7 +22,7 @@
                :alert="options.alert"
                :rowSelection="options.rowSelection">
         <template slot="Hostname" slot-scope="text, record">
-          <router-link :to="{ path: `nodes/${record['ID']}`, params: { nodeId: text } }">
+          <router-link :to="{ path: `nodes/${record['ID']}` }">
             {{ record['Description']['Hostname'] }}
           </router-link>
           <a-tooltip placement="right">
