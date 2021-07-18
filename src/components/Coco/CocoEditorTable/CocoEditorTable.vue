@@ -6,10 +6,15 @@
            style="margin-bottom: 30px">
     <template v-for="column in columns" v-if="column.scopedSlots" :slot="column.dataIndex" slot-scope="text, record">
       <div :key="column.dataIndex">
-        <a-input v-if="record['editable']"
-                 v-model="record['editor'][column.dataIndex]"
-                 style="margin: -6px 0"/>
-        <template v-else>{{ text }}</template>
+        <template v-if="hasBodySlot">
+          <slot name="body" :record="record" :column="column" :text="text"/>
+        </template>
+        <template v-else>
+          <a-input v-if="record['editable']"
+                   v-model="record['editor'][column.dataIndex]"
+                   style="margin: -6px 0"/>
+          <template v-else>{{ text }}</template>
+        </template>
       </div>
     </template>
     <template slot="action" slot-scope="text, record">
@@ -58,7 +63,9 @@
       }
     },
     data() {
-      return {}
+      return {
+        hasBodySlot: false
+      }
     },
     methods: {
       append(data) {
@@ -66,7 +73,7 @@
         record['editor'] = _.cloneDeep(record)
         record['editable'] = true
         data.push(record)
-        this.$emit('append')
+        this.$emit('append', record)
       },
       save(record) {
         record = Object.assign(record, record['editor'])
@@ -77,7 +84,7 @@
         const index = data.indexOf(record)
         if (_.isEmpty(record['name']) && _.isEmpty(record['value'])) {
           data.splice(index, 1)
-          this.$emit('cancel')
+          this.$emit('cancel', record, data)
         } else {
           record['editor']['name'] = record['name']
           record['editor']['value'] = record['value']
@@ -88,6 +95,11 @@
         const index = data.indexOf(record)
         data.splice(index, 1)
         this.$emit('remove')
+      }
+    },
+    mounted() {
+      if (this.$scopedSlots.body) {
+        this.hasBodySlot = true
       }
     }
   }
