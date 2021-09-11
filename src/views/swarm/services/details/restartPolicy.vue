@@ -6,7 +6,7 @@
         <a-col span="4">{{ item.label }}</a-col>
         <a-col span="6">
           <template v-if="item.prop === 'restartCondition'">
-            <a-select v-model="item.value" :default-value="item.value" @change="() => changed = true" style="width: 240px;">
+            <a-select v-model="item.value" :default-value="item.value" @change="() => this.changed = true" style="width: 240px;">
               <a-select-option value="none">None</a-select-option>
               <a-select-option value="on-failure">On failure</a-select-option>
               <a-select-option value="any">Any</a-select-option>
@@ -16,11 +16,11 @@
             <a-input v-model="item.value" style="width: 240px;"/>
           </template>
           <template v-else>
-            <a-input-number v-model="item.value" :min="0" @change="() => changed = true" style="width: 240px;"/>
+            <a-input-number v-model="item.value" :min="0" @change="() => this.changed = true" style="width: 240px;"/>
           </template>
         </a-col>
-        <a-col span="14">
-          <a-alert type="info" :message="item.tips" banner/>
+        <a-col span="13" offset="1">
+          <a-alert type="info" :message="item.tips" :banner="true"/>
         </a-col>
       </a-list-item>
     </a-list>
