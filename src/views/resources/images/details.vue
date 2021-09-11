@@ -80,8 +80,15 @@
       </a-list>
     </a-card>
 
-    <a-card :title="'镜像文件层'" :bordered="false" style="margin-bottom: 20px;" class="compact">
-      <s-table ref="imageLayersRef"
+    <a-card :title="'镜像文件层'" :bordered="false" class="compact">
+      <div slot="extra">
+        <a-button-group>
+          <a-button icon="table" @click="displayMode = 'table'"/>
+          <a-button icon="code-sandbox" @click="displayMode = 'chart'"/>
+        </a-button-group>
+      </div>
+      <s-table v-if="displayMode === 'table'"
+               ref="imageLayersRef"
                rowKey="key"
                size="middle"
                :columns="layerOption.columns"
@@ -104,6 +111,7 @@
           </a-tooltip>
         </template>
       </s-table>
+      <chart v-else :options="chartOptions"/>
     </a-card>
   </page-view>
 </template>
@@ -111,10 +119,15 @@
 <script>
   import { PageView } from '@/layouts'
   import { STable, DetailList } from '@/components'
-  import { convertSize } from '@/utils/util'
+  import { Chart } from 'highcharts-vue'
+  import { convertSize, dateFormat } from '@/utils/util'
   import { invokeApi } from '@/api/http'
   import { common } from '@/mixins'
 
+  import Highcharts from 'highcharts'
+  import Highcharts3D from 'highcharts/highcharts-3d'
+
+  Highcharts3D(Highcharts)
   const DetailListItem = DetailList.Item
 
   export default {
@@ -123,11 +136,13 @@
       PageView,
       STable,
       DetailList,
-      DetailListItem
+      DetailListItem,
+      Chart
     },
     mixins: [common.base],
     data() {
       return {
+        displayMode: 'table',
         tags: [],
         tagImageForm: this.$form.createForm(this),
         imageData: [],
@@ -164,6 +179,44 @@
             }
           ],
           data: null
+        },
+        chartOptions: {
+          chart: {
+            type: 'column',
+            options3d: {
+              enabled: true,
+              alpha: 15,
+              beta: 15,
+              viewDistance: 50,
+              depth: 500
+            }
+          },
+          legend: {
+            enabled: false
+          },
+          title: {
+            text: ''
+          },
+          xAxis: {
+            visible: false
+          },
+          yAxis: {
+            visible: false
+          },
+          zAxis: {
+            visible: false
+          },
+          tooltip: {
+            headerFormat: '<b>构建层数：<b style="color: {series.color}">第{series.name.no}层</b></b><br>',
+            pointFormat: '<b>构建指令：{series.name.layer}</b><br><b>构建时间：{series.name.created}</b><br><b>构建大小：{series.name.size}</b>'
+          },
+          plotOptions: {
+            column: {
+              stacking: 'normal',
+              depth: 500
+            }
+          },
+          series: []
         }
       }
     },
@@ -264,6 +317,19 @@
       loadImageHistory() {
         return invokeApi('/image/history', { imageId: this.imageId }).then(response => {
           if (response.code === 2000) {
+            this.chartOptions.series = []
+            response.data.reverse().forEach((imageLayer, index) => {
+              const content = {
+                no: index + 1,
+                layer: imageLayer['CreatedBy'].replace('/bin/sh -c #(nop) ', '').replace('/bin/sh -c ', 'RUN '),
+                created: dateFormat(imageLayer['Created'] * 1000),
+                size: convertSize(imageLayer['Size'])
+              }
+              this.chartOptions.series.push({
+                name: content,
+                data: [1]
+              })
+            })
             return {
               data: response.data.reverse(),
               pageNo: 1,
