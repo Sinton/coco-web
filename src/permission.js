@@ -5,6 +5,7 @@ import store from './store'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import notification from 'ant-design-vue/es/notification'
+import message from 'ant-design-vue/es/message'
 import { setDocumentTitle, domTitle } from '@/utils/domUtil'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
@@ -50,7 +51,13 @@ router.beforeEach((to, from, next) => {
             })
           })
       } else {
-        next()
+        if (Vue.ls.get('ENDPOINT') === null && to.path !== '/resources/endpoints') {
+          message.error('未选择服务终端，请选择指定服务终端')
+          next({ path: '/resources/endpoints' })
+          NProgress.done()
+        } else {
+          next()
+        }
       }
     }
   } else {
