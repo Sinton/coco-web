@@ -4,7 +4,7 @@
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['servicesRef'].refresh()">刷新</a-button>
         <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeService">删除</a-button>
-        <a-button type="primary" icon="plus">创建服务</a-button>
+        <a-button type="primary" icon="plus" @click="() => this.$router.push({ path: 'services/create' })">创建服务</a-button>
       </div>
       <s-table ref="servicesRef"
                :rowKey="record => record['ID']"
