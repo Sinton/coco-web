@@ -58,7 +58,6 @@
         invokeApi('/service/update', params).then(response => {
           if (response.code === 2000) {
             this.changed = false
-            this.reset = false
             this.$notification.success({ message: '标题', description: '更新服务配置成功' })
             this.$router.go(0)
           } else {
