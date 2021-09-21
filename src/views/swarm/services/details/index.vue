@@ -38,7 +38,7 @@
     </a-card>
     <service-container-spec :data="containerSpec"/>
     <service-envs :data="envs"/>
-    <service-container-labels :data="containerLabels"/>
+    <details-service-container-labels :data="containerLabels"/>
     <service-mounts :data="mounts"/>
     <service-networks :data="networks"/>
     <service-ports :data="ports"/>
@@ -65,7 +65,7 @@
   import { STable, CocoJsonViewer } from '@/components'
   import ServiceContainerSpec from '@views/swarm/services/details/containerSpec'
   import ServiceEnvs from '@views/swarm/services/details/envs'
-  import ServiceContainerLabels from '@views/swarm/services/details/containerLabels'
+  import DetailsServiceContainerLabels from '@views/swarm/services/details/containerLabels'
   import ServiceMounts from '@views/swarm/services/details/mounts'
   import ServiceNetworks from '@views/swarm/services/details/networks'
   import ServicePorts from '@views/swarm/services/details/ports'
@@ -85,7 +85,7 @@
     components: {
       ServiceContainerSpec,
       ServiceEnvs,
-      ServiceContainerLabels,
+      DetailsServiceContainerLabels,
       ServiceMounts,
       ServiceNetworks,
       ServicePorts,
