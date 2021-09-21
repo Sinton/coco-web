@@ -4,16 +4,15 @@
       <a-col span="4">{{ item.label }}</a-col>
       <a-col span="6">
         <template v-if="item.prop === 'parallelism'">
-          <a-input-number v-model="item.value" :min="1" @change="change" style="width: 240px;"/>
+          <a-input-number v-model="data[item.prop]" :min="1" style="width: 240px;"/>
         </template>
         <template v-else-if="item.prop === 'delay'">
-          <a-input v-model="item.value" @change="change" style="width: 240px;"/>
+          <a-input v-model="data[item.prop]" style="width: 240px;"/>
         </template>
         <template v-else>
-          <a-radio-group v-model="item.value"
-                         :options="[{label: '继续', value: 'continue'}, {label: '暂停', value: 'pause'}]"
-                         :default-value="'pause'"
-                         @change="change" />
+          <a-radio-group v-model="data[item.prop]"
+                         :options="failureAction"
+                         :default-value="item.value"/>
         </template>
       </a-col>
       <a-col span="13" offset="1">
@@ -24,25 +23,37 @@
 </template>
 
 <script>
+  import { isNotEmpty } from '@/utils/util'
+
   export default {
     name: 'CommonServiceUpdateConfig',
     props: {
       data: {
         type: Object,
-        default: () => {}
+        default: () => {
+          return {
+            parallelism: 1,
+            delay: '0s',
+            failureAction: 'pause'
+          }
+        }
+      },
+      reset: {
+        type: Boolean,
+        default: () => false
       }
     },
     data() {
       return {
+        failureAction: [
+          { label: '继续', value: 'continue' },
+          { label: '暂停', value: 'pause' }
+        ],
         updateConfig: [],
-        changed: false
+        update: false
       }
     },
     methods: {
-      change() {
-        this.changed = true
-        this.$emit('changed', this.changed)
-      },
       renderData() {
         this.updateConfig = []
         this.updateConfig.push(
@@ -50,19 +61,19 @@
             prop: 'parallelism',
             tips: '同时更新的最大任务数（为0表示一次更新全部）。默认为1',
             label: '调度并行',
-            value: _.isEmpty(this.data) ? 1 : _.isEmpty(this.data['Parallelism']) ? 1 : this.data['Parallelism']
+            value: this.data['parallelism']
           },
           {
             prop: 'delay',
             tips: '多个更新动作之间的延迟执行时间，时间单位（ns | us | ms | s | m | h）表示。默认值为0秒，不延迟',
             label: '更新延迟时间',
-            value: _.isEmpty(this.data) ? 0 : _.isEmpty(this.data['Delay']) ? 0 : this.data['Delay']
+            value: this.data['delay']
           },
           {
             prop: 'failureAction',
             tips: '更新后无法启动时采取动作',
             label: '更新失败执行动作',
-            value: _.isEmpty(this.data) ? 'pause' : _.isEmpty(this.data['FailureAction']) ? 'pause' : this.data['FailureAction']
+            value: this.data['failureAction']
           }
         )
       }
@@ -72,9 +83,26 @@
         deep: true,
         immediate: true,
         handler() {
-          this.renderData()
+          if (this.initialized) {
+            this.renderData()
+            if (this.update && !this.reset) {
+              this.$emit('changed')
+            }
+            if (this.update && this.reset) {
+              this.$emit('reset-after')
+            }
+            this.update = true
+          }
         }
       }
+    },
+    computed: {
+      initialized() {
+        return (isNotEmpty(this.data) && isNotEmpty(this.data['failureAction']))
+      }
+    },
+    deactivated() {
+      this.update = false
     }
   }
 </script>

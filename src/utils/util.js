@@ -149,6 +149,16 @@ export function timeSecondFormat (timeSecondStr) {
 }
 
 /**
+ * 判断是否不为空
+ *
+ * @param any
+ * @returns {boolean}
+ */
+export function isNotEmpty(any) {
+  return !isEmpty(any)
+}
+
+/**
  * 判断是否为空
  *
  * @param any
@@ -156,16 +166,6 @@ export function timeSecondFormat (timeSecondStr) {
  */
 export function isEmpty(any) {
   return _.isEmpty(any)
-}
-
-/**
- * 判断是否不为空
- *
- * @param any
- * @returns {boolean}
- */
-export function isNotEmpty(any) {
-  return !_.isEmpty(any)
 }
 
 /**

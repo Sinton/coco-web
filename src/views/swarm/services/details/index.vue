@@ -45,7 +45,7 @@
     <service-resources :data="resources"/>
     <service-placement-constraints :data="placementConstraints"/>
     <details-service-restart-policy :id="serviceId" :data="restartPolicy"/>
-    <service-update-config :data="updateConfig"/>
+    <details-service-update-config :id="serviceId" :data="updateConfig"/>
     <service-service-labels :data="serviceLabels"/>
     <service-configs :data="configs"/>
     <service-secrets :data="secrets"/>
@@ -74,8 +74,8 @@
   import ServiceResources from '@views/swarm/services/details/resources'
   import ServicePlacementConstraints from '@views/swarm/services/details/placementConstraints'
   import DetailsServiceRestartPolicy from '@views/swarm/services/details/restartPolicy'
+  import DetailsServiceUpdateConfig from '@views/swarm/services/details/updateConfig'
   import ServiceServiceLabels from '@views/swarm/services/details/serviceLabels'
-  import ServiceUpdateConfig from '@views/swarm/services/details/updateConfig'
   import ServiceConfigs from '@views/swarm/services/details/configs'
   import ServiceSecrets from '@views/swarm/services/details/secrets'
   import ServiceTasks from '@views/swarm/services/details/tasks'
@@ -92,8 +92,8 @@
       ServiceResources,
       ServicePlacementConstraints,
       DetailsServiceRestartPolicy,
+      DetailsServiceUpdateConfig,
       ServiceServiceLabels,
-      ServiceUpdateConfig,
       ServiceConfigs,
       ServiceSecrets,
       ServiceTasks,
