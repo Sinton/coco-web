@@ -97,4 +97,4 @@ yarn run lint
 
 ### Other
 
-- **IMPORTANT : About Issue feedback !! when opening Issue read [Issue / PR Contributing](https://github.com/sendya/ant-design-pro-vue/issues/90)**
+- **IMPORTANT : About Issue feedback !! when opening Issue read [Issue / PR Contributing](https://github.com/Sinton/coco-web/issues/90)**
