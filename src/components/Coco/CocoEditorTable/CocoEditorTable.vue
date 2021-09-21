@@ -12,6 +12,7 @@
         <template v-else>
           <a-input v-if="record['editable']"
                    v-model="record['editor'][column.dataIndex]"
+                   :allow-clear="true"
                    style="margin: -6px 0"/>
           <template v-else>{{ text }}</template>
         </template>
