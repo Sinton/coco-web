@@ -2,8 +2,7 @@
   <a-table :columns="columns"
            :dataSource="data"
            :pagination="false"
-           :scroll="{y: 200}"
-           style="margin-bottom: 30px">
+           :scroll="{y: 200}">
     <template v-for="column in columns" v-if="column.scopedSlots" :slot="column.dataIndex" slot-scope="text, record">
       <div :key="column.dataIndex">
         <template v-if="hasBodySlot">
@@ -28,25 +27,35 @@
         <span v-else>
             <a @click="() => record['editable'] = true">修改</a>
             <a-divider type="vertical"/>
-            <a @click="() => remove(record, data)">移除</a>
+            <a-popconfirm @confirm="() => remove(record, data)">
+              <template slot="title">确定要进行移除？</template>
+              <a>移除</a>
+            </a-popconfirm>
           </span>
       </div>
     </template>
     <div slot="footer" style="text-align: right;">
-      <slot name="footer"/>
-      <a><a-button shape="circle"
-                   type="primary"
-                   icon="plus"
-                   size="small"
-                   style="margin-right: 5px"
-                   @click="append(data)"/>
-        {{ buttonText }}
-      </a>
+      <slot v-if="hasFooterSlot" name="footer"/>
+      <template v-else>
+        <a style="float:left;">
+          <slot v-if="hasFooterLeftSlot" name="footerLeft"/>
+        </a>
+        <a><a-button shape="circle"
+                     type="primary"
+                     icon="plus"
+                     size="small"
+                     style="margin-right: 5px"
+                     @click="append(data)"/>
+          {{ buttonText }}
+        </a>
+      </template>
     </div>
   </a-table>
 </template>
 
 <script>
+  import { isEmpty, isFunction, cloneDeep } from '@/utils/util'
+
   export default {
     name: 'CocoEditorTable',
     props: {
@@ -65,13 +74,12 @@
     },
     data() {
       return {
-        hasBodySlot: false
       }
     },
     methods: {
       append(data) {
         const record = {}
-        record['editor'] = _.cloneDeep(record)
+        record['editor'] = cloneDeep(record)
         record['editable'] = true
         data.push(record)
         this.$emit('append', record)
@@ -83,7 +91,7 @@
       },
       cancel(record, data) {
         const index = data.indexOf(record)
-        if (_.isEmpty(record['name']) && _.isEmpty(record['value'])) {
+        if (isEmpty(record['name']) && isEmpty(record['value'])) {
           data.splice(index, 1)
           this.$emit('cancel', record, data)
         } else {
@@ -98,9 +106,15 @@
         this.$emit('remove')
       }
     },
-    mounted() {
-      if (this.$scopedSlots.body) {
-        this.hasBodySlot = true
+    computed: {
+      hasBodySlot() {
+        return isFunction(this.$scopedSlots.body)
+      },
+      hasFooterSlot() {
+        return isFunction(this.$scopedSlots.footer)
+      },
+      hasFooterLeftSlot() {
+        return isFunction(this.$scopedSlots.footerLeft)
       }
     }
   }

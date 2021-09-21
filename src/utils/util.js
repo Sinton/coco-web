@@ -169,6 +169,16 @@ export function isEmpty(any) {
 }
 
 /**
+ * 判断是否为函数
+ *
+ * @param any
+ * @returns {value is (...args: any[]) => any}
+ */
+export function isFunction(any) {
+  return _.isFunction(any)
+}
+
+/**
  * 对象深度拷贝
  *
  * @param any
