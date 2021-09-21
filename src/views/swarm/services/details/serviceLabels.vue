@@ -1,7 +1,7 @@
 <template>
   <a-card :bordered="false" style="margin-bottom: 20px;" class="compact">
     <template slot="title"><a-icon type="bars"/> 服务标签</template>
-    <common-service-labels :data="serviceLabels" @changed="() => this.changed = true">
+    <common-labels :data="serviceLabels" :button-text="'新增服务标签'" @changed="() => this.changed = true">
       <a-button-group slot="applyOperation">
         <a-button type="primary" icon="check" size="small" :disabled="!changed" @click="onApply">应用变更</a-button>
         <a-dropdown :disabled="!changed">
@@ -11,19 +11,19 @@
           </a-menu>
         </a-dropdown>
       </a-button-group>
-    </common-service-labels>
+    </common-labels>
   </a-card>
 </template>
 
 <script>
-  import CommonServiceLabels from '@/views/swarm/services/common/serviceLabels'
+  import CommonLabels from '@/views/swarm/common/labels'
   import { cloneDeep, isNotEmpty } from '@/utils/util'
   import { invokeApi } from '@/api/http'
 
   export default {
     name: 'DetailsServiceServiceLabels',
     components: {
-      CommonServiceLabels
+      CommonLabels
     },
     props: {
       id: {

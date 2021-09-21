@@ -1,7 +1,7 @@
 <template>
   <coco-editor-table :columns="columns"
                      :data="data"
-                     :button-text="'添加服务标签'"
+                     :button-text="buttonText"
                      @save="() => this.$emit('changed')"
                      @remove="() => this.$emit('changed')">
     <slot name="applyOperation" slot="footerLeft"></slot>
@@ -12,7 +12,7 @@
   import { CocoEditorTable } from '@/components/Coco'
 
   export default {
-    name: 'CommonServiceLabels',
+    name: 'CommonLabels',
     components: {
       CocoEditorTable
     },
@@ -20,6 +20,10 @@
       data: {
         type: Array,
         default: () => []
+      },
+      buttonText: {
+        type: String,
+        default: '新增标签'
       }
     },
     data() {
