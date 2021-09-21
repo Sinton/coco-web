@@ -40,7 +40,7 @@
     <details-service-container-labels :data="containerLabels"/>
     <service-mounts :data="mounts"/>
     <service-networks :data="networks"/>
-    <service-ports :data="ports"/>
+    <details-service-service-ports :data="ports"/>
     <service-resources :data="resources"/>
     <service-placement-constraints :data="placementConstraints"/>
     <details-service-restart-policy :id="serviceId" :data="restartPolicy"/>
@@ -67,7 +67,7 @@
   import DetailsServiceContainerLabels from '@views/swarm/services/details/containerLabels'
   import ServiceMounts from '@views/swarm/services/details/mounts'
   import ServiceNetworks from '@views/swarm/services/details/networks'
-  import ServicePorts from '@views/swarm/services/details/ports'
+  import DetailsServiceServicePorts from '@views/swarm/services/details/ports'
   import ServiceResources from '@views/swarm/services/details/resources'
   import ServicePlacementConstraints from '@views/swarm/services/details/placementConstraints'
   import DetailsServiceRestartPolicy from '@views/swarm/services/details/restartPolicy'
@@ -88,7 +88,7 @@
       DetailsServiceContainerLabels,
       ServiceMounts,
       ServiceNetworks,
-      ServicePorts,
+      DetailsServiceServicePorts,
       ServiceResources,
       ServicePlacementConstraints,
       DetailsServiceRestartPolicy,
