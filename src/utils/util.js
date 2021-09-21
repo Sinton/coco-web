@@ -70,7 +70,7 @@ export function removeLoadingAnimate (id = '', timeout = 1500) {
  * @param unit
  * @param reverse
  * @param base
- * @returns {string}
+ * @returns {string|number|*}
  */
 export function convertSize(size, unit = true, reverse = false, base = 1000) {
   if (reverse) {
@@ -109,7 +109,61 @@ export function convertSize(size, unit = true, reverse = false, base = 1000) {
  *
  * @param dateStr
  * @param pattern
+ * @returns {string}
  */
 export function dateFormat (dateStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
   return moment(dateStr).format(pattern)
+}
+
+/**
+ * 秒数格式化
+ *
+ * @param timeSecondStr
+ * @returns {string|*}
+ */
+export function timeSecondFormat (timeSecondStr) {
+  const zeroSecond  = 0
+  const nanoSecond  = 1
+  const microSecond = nanoSecond * 1000
+  const milliSecond = microSecond * 1000
+  const second      = milliSecond * 1000
+  const minute      = second * 60
+  const hour        = minute * 60
+  if (Number.isInteger(timeSecondStr)) {
+    if (nanoSecond <= timeSecondStr && timeSecondStr < microSecond) {
+      return `${timeSecondStr / nanoSecond}ns`
+    } else if (microSecond <= timeSecondStr && timeSecondStr < milliSecond) {
+      return `${timeSecondStr / microSecond}us`
+    } else if (milliSecond <= timeSecondStr && timeSecondStr < second) {
+      return `${timeSecondStr / milliSecond}ms`
+    } else if (second <= timeSecondStr && timeSecondStr < minute) {
+      return `${timeSecondStr / second}s`
+    } else if (minute <= timeSecondStr && timeSecondStr < hour) {
+      return `${timeSecondStr / minute}m`
+    } else if (hour <= timeSecondStr) {
+      return `${timeSecondStr / hour}h`
+    } else {
+      return `${zeroSecond}s`
+    }
+  }
+}
+
+/**
+ * 判断时候不为空
+ *
+ * @param any
+ * @returns {boolean}
+ */
+export function isNotEmpty(any) {
+  return !_.isEmpty(any)
+}
+
+/**
+ * 对象深度拷贝
+ *
+ * @param any
+ * @returns {*}
+ */
+export function cloneDeep(any) {
+  return _.cloneDeep(any)
 }
