@@ -36,11 +36,11 @@
       <a-button type="link" icon="exclamation-circle" @click="inspectService">摘要</a-button>
     </a-card>
     <service-container-spec :data="containerSpec"/>
-    <service-envs :data="envs"/>
-    <details-service-container-labels :data="containerLabels"/>
-    <service-mounts :data="mounts"/>
+    <details-service-service-envs :id="serviceId" :data="envs"/>
+    <details-service-container-labels :id="serviceId" :data="containerLabels"/>
+    <details-service-service-volumes :data="volumes"/>
     <service-networks :data="networks"/>
-    <details-service-service-ports :data="ports"/>
+    <details-service-service-ports :id="serviceId" :data="ports"/>
     <service-resources :data="resources"/>
     <service-placement-constraints :data="placementConstraints"/>
     <details-service-restart-policy :id="serviceId" :data="restartPolicy"/>
@@ -63,9 +63,9 @@
   import { PageView } from '@/layouts'
   import { STable, CocoJsonViewer } from '@/components'
   import ServiceContainerSpec from '@views/swarm/services/details/containerSpec'
-  import ServiceEnvs from '@views/swarm/services/details/envs'
+  import DetailsServiceServiceEnvs from '@views/swarm/services/details/envs'
   import DetailsServiceContainerLabels from '@views/swarm/services/details/containerLabels'
-  import ServiceMounts from '@views/swarm/services/details/mounts'
+  import DetailsServiceServiceVolumes from '@views/swarm/services/details/volumes'
   import ServiceNetworks from '@views/swarm/services/details/networks'
   import DetailsServiceServicePorts from '@views/swarm/services/details/ports'
   import ServiceResources from '@views/swarm/services/details/resources'
@@ -84,9 +84,9 @@
     name: 'ServiceDetails',
     components: {
       ServiceContainerSpec,
-      ServiceEnvs,
+      DetailsServiceServiceEnvs,
       DetailsServiceContainerLabels,
-      ServiceMounts,
+      DetailsServiceServiceVolumes,
       ServiceNetworks,
       DetailsServiceServicePorts,
       ServiceResources,
@@ -108,7 +108,7 @@
         containerSpec: {},
         envs: [],
         containerLabels: {},
-        mounts: [],
+        volumes: [],
         networks: [],
         ports: [],
         resources: {},
@@ -152,7 +152,7 @@
             // 容器标签
             this.containerLabels = response.data['Spec']['TaskTemplate']['ContainerSpec']['Labels']
             // 存储卷
-            this.mounts = response.data['Spec']['TaskTemplate']['ContainerSpec']['Mounts']
+            this.volumes = response.data['Spec']['TaskTemplate']['ContainerSpec']['Mounts']
             // 网络
             this.networks = response.data['Endpoint']['VirtualIPs']
             // 端口映射
