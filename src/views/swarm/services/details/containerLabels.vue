@@ -18,7 +18,7 @@
 <script>
   import CommonContainerLabels from '@/views/swarm/services/common/containerLabels'
   import { invokeApi } from '@/api/http'
-  import { cloneDeep } from '@/utils/util'
+  import { cloneDeep, isNotEmpty } from '@/utils/util'
 
   export default {
     name: 'DetailsServiceContainerLabels',
@@ -63,6 +63,8 @@
           } else {
             this.$notification.warning({ message: '标题', description: '更新服务配置失败' })
           }
+        }).catch(() => {
+          this.$notification.error({ message: '错误', description: '更新服务配置异常' })
         })
       },
       onReset() {
@@ -75,7 +77,7 @@
         deep: true,
         immediate: true,
         handler() {
-          if (Object.keys(this.data).length > 0) {
+          if (isNotEmpty(this.data)) {
             this.renderData()
           }
         }
