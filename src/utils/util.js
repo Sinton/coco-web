@@ -179,6 +179,16 @@ export function isFunction(any) {
 }
 
 /**
+ * 判断是否为数字
+ *
+ * @param any
+ * @returns {value is number}
+ */
+export function isNumber(any) {
+  return _.isNumber(any)
+}
+
+/**
  * 对象深度拷贝
  *
  * @param any
@@ -186,4 +196,14 @@ export function isFunction(any) {
  */
 export function cloneDeep(any) {
   return _.cloneDeep(any)
+}
+
+/**
+ * 合并数组对象
+ *
+ * @param any
+ * @returns {unknown[]}
+ */
+export function union(any) {
+  return _.union(any)
 }
