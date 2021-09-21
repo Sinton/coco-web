@@ -1,5 +1,9 @@
 <template>
-  <coco-editor-table :columns="columns" :data="data" :button-text="'添加容器标签'" @save="() => this.$emit('changed')">
+  <coco-editor-table :columns="columns"
+                     :data="data"
+                     :button-text="'添加容器标签'"
+                     @save="() => this.$emit('changed')"
+                     @remove="() => this.$emit('changed')">
     <slot name="applyOperation" slot="footerLeft"></slot>
   </coco-editor-table>
 </template>
