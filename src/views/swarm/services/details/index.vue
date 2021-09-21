@@ -1,11 +1,10 @@
 <template>
   <page-view>
     <a-collapse :bordered="false" style="margin-bottom: 25px">
-      <a-collapse-panel key="1" header="服务的类型">
-        <p>暂无说明</p>
-      </a-collapse-panel>
-      <a-collapse-panel key="2" header="无状态服务和有状态服务的使用场景?">
-        <p>暂无说明</p>
+      <a-collapse-panel v-for="faq in faqs"
+                        :key="faq.id"
+                        :header="faq.header">
+        <p>{{ faq.content }}</p>
       </a-collapse-panel>
     </a-collapse>
     <a-card :bordered="false" style="margin-bottom: 20px;">
@@ -79,6 +78,7 @@
   import ServiceTasks from '@views/swarm/services/details/tasks'
   import { dateFormat, isEmpty } from '@/utils/util'
   import { invokeApi } from '@api/http'
+  import { services } from '@/mixins'
 
   export default {
     name: 'ServiceDetails',
@@ -101,6 +101,7 @@
       STable,
       CocoJsonViewer
     },
+    mixins: [services.faq],
     data() {
       return {
         details: [],
