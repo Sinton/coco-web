@@ -46,7 +46,7 @@
     <service-placement-constraints :data="placementConstraints"/>
     <details-service-restart-policy :id="serviceId" :data="restartPolicy"/>
     <details-service-update-config :id="serviceId" :data="updateConfig"/>
-    <service-service-labels :data="serviceLabels"/>
+    <details-service-service-labels :id="serviceId" :data="serviceLabels"/>
     <service-configs :data="configs"/>
     <service-secrets :data="secrets"/>
     <service-tasks :service-id="serviceId"/>
@@ -63,8 +63,6 @@
 <script>
   import { PageView } from '@/layouts'
   import { STable, CocoJsonViewer } from '@/components'
-  import { invokeApi } from '@api/http'
-  import { dateFormat, isEmpty } from '@/utils/util'
   import ServiceContainerSpec from '@views/swarm/services/details/containerSpec'
   import ServiceEnvs from '@views/swarm/services/details/envs'
   import ServiceContainerLabels from '@views/swarm/services/details/containerLabels'
@@ -75,10 +73,12 @@
   import ServicePlacementConstraints from '@views/swarm/services/details/placementConstraints'
   import DetailsServiceRestartPolicy from '@views/swarm/services/details/restartPolicy'
   import DetailsServiceUpdateConfig from '@views/swarm/services/details/updateConfig'
-  import ServiceServiceLabels from '@views/swarm/services/details/serviceLabels'
+  import DetailsServiceServiceLabels from '@views/swarm/services/details/serviceLabels'
   import ServiceConfigs from '@views/swarm/services/details/configs'
   import ServiceSecrets from '@views/swarm/services/details/secrets'
   import ServiceTasks from '@views/swarm/services/details/tasks'
+  import { dateFormat, isEmpty } from '@/utils/util'
+  import { invokeApi } from '@api/http'
 
   export default {
     name: 'ServiceDetails',
@@ -93,7 +93,7 @@
       ServicePlacementConstraints,
       DetailsServiceRestartPolicy,
       DetailsServiceUpdateConfig,
-      ServiceServiceLabels,
+      DetailsServiceServiceLabels,
       ServiceConfigs,
       ServiceSecrets,
       ServiceTasks,
