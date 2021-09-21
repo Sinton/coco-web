@@ -17,7 +17,7 @@
           </a-select>
           <a-input v-else
                    v-model="item.record['editor'][item.column['dataIndex']]"
-                   :placeholder="item.record['editor'][item.column['dataIndex']] | placeholder"
+                   :placeholder="item.record['editor']['name'] | placeholder"
                    style="margin: -6px 0;"/>
         </template>
         <template v-else>{{ item.text }}</template>
@@ -29,6 +29,7 @@
 <script>
   import { CocoEditorTable } from '@/components/Coco'
   import { invokeApi } from '@/api/http'
+  import { isNotEmpty } from '@/utils/util'
 
   export default {
     name: 'CreateServiceSecrets',
@@ -43,7 +44,7 @@
     },
     filters: {
       placeholder(secretName) {
-        if (!_.isEmpty(secretName)) {
+        if (isNotEmpty(secretName)) {
           return `/run/secrets/${secretName}`
         } else {
           return '/run/secrets/$SECRET_NAME'
