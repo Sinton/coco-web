@@ -23,7 +23,7 @@
 
 <script>
   import CommonServiceUpdateConfig from '@/views/swarm/services/common/updateConfig'
-  import { timeSecondFormat, isNotEmpty, cloneDeep } from '@/utils/util'
+  import { timeSecondFormat, isNotEmpty, cloneDeep, isNumber } from '@/utils/util'
   import { invokeApi } from '@api/http'
 
   export default {
@@ -77,8 +77,8 @@
         handler() {
           if (this.initialized) {
             this.updateConfig = {
-              parallelism: this.data['Parallelism'],
-              delay: timeSecondFormat(this.data['Delay']),
+              parallelism: isNumber(this.data['Parallelism']) ? this.data['Parallelism'] : 1,
+              delay: isNumber(this.data['Delay']) ? timeSecondFormat(this.data['Delay']) : '0s',
               failureAction: this.data['FailureAction']
             }
             if (!this.changed) {

@@ -23,7 +23,7 @@
 
 <script>
   import CommonServiceRestartPolicy from '@/views/swarm/services/common/restartPolicy'
-  import { timeSecondFormat, isNotEmpty, cloneDeep } from '@/utils/util'
+  import { timeSecondFormat, isNotEmpty, cloneDeep, isNumber } from '@/utils/util'
   import { invokeApi } from '@api/http'
 
   export default {
@@ -78,9 +78,9 @@
           if (this.initialized) {
             this.restartPolicy = {
               condition: this.data['Condition'],
-              delay: timeSecondFormat(this.data['Delay']),
-              maxAttempts: this.data['MaxAttempts'],
-              window: timeSecondFormat(this.data['Window'])
+              delay: isNumber(this.data['Delay']) ? timeSecondFormat(this.data['Delay']) : '5s',
+              maxAttempts: isNumber(this.data['MaxAttempts']) ? this.data['MaxAttempts'] : 0,
+              window: isNumber(this.data['Window']) ? timeSecondFormat(this.data['Window']) : '0s'
             }
             if (!this.changed) {
               this.originalRestartPolicy = cloneDeep(this.restartPolicy)
