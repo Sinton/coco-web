@@ -44,7 +44,7 @@
     <service-ports :data="ports"/>
     <service-resources :data="resources"/>
     <service-placement-constraints :data="placementConstraints"/>
-    <service-restart-policy :data="restartPolicy"/>
+    <details-service-restart-policy :id="serviceId" :data="restartPolicy"/>
     <service-update-config :data="updateConfig"/>
     <service-service-labels :data="serviceLabels"/>
     <service-configs :data="configs"/>
@@ -64,7 +64,7 @@
   import { PageView } from '@/layouts'
   import { STable, CocoJsonViewer } from '@/components'
   import { invokeApi } from '@api/http'
-  import { dateFormat } from '@/utils/util'
+  import { dateFormat, isEmpty } from '@/utils/util'
   import ServiceContainerSpec from '@views/swarm/services/details/containerSpec'
   import ServiceEnvs from '@views/swarm/services/details/envs'
   import ServiceContainerLabels from '@views/swarm/services/details/containerLabels'
@@ -73,7 +73,7 @@
   import ServicePorts from '@views/swarm/services/details/ports'
   import ServiceResources from '@views/swarm/services/details/resources'
   import ServicePlacementConstraints from '@views/swarm/services/details/placementConstraints'
-  import ServiceRestartPolicy from '@views/swarm/services/details/restartPolicy'
+  import DetailsServiceRestartPolicy from '@views/swarm/services/details/restartPolicy'
   import ServiceServiceLabels from '@views/swarm/services/details/serviceLabels'
   import ServiceUpdateConfig from '@views/swarm/services/details/updateConfig'
   import ServiceConfigs from '@views/swarm/services/details/configs'
@@ -91,7 +91,7 @@
       ServicePorts,
       ServiceResources,
       ServicePlacementConstraints,
-      ServiceRestartPolicy,
+      DetailsServiceRestartPolicy,
       ServiceServiceLabels,
       ServiceUpdateConfig,
       ServiceConfigs,
@@ -136,6 +136,7 @@
         invokeApi('/service/inspect', { serviceId: this.serviceId }).then(response => {
           if (response.code === 2000) {
             // 详情
+            this.details = []
             this.details.push(
               { prop: 'Name', label: '名称', value: response.data['Spec']['Name'] },
               { prop: 'Image', label: '镜像', value: response.data['Spec']['TaskTemplate']['ContainerSpec']['Image'] },
@@ -158,7 +159,7 @@
             // 资源限制与预留
             this.resources = response.data['Spec']['TaskTemplate']['Resources']
             // 约束条件
-            this.placementConstraints = response.data['Spec']['TaskTemplate']['Placement']['Constraints']
+            this.placementConstraints = isEmpty(response.data['Spec']['TaskTemplate']['Placement']) ? null : response.data['Spec']['TaskTemplate']['Placement']['Constraints']
             // 重启策略
             this.restartPolicy = response.data['Spec']['TaskTemplate']['RestartPolicy']
             // 更新配置

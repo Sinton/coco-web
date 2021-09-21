@@ -149,7 +149,17 @@ export function timeSecondFormat (timeSecondStr) {
 }
 
 /**
- * 判断时候不为空
+ * 判断是否为空
+ *
+ * @param any
+ * @returns {boolean}
+ */
+export function isEmpty(any) {
+  return _.isEmpty(any)
+}
+
+/**
+ * 判断是否不为空
  *
  * @param any
  * @returns {boolean}
