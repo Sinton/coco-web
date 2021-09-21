@@ -22,45 +22,7 @@
 
     <coco-topic style="margin-top: 20px">标签配置</coco-topic>
     <a-divider/>
-    <a-table :columns="labelColumns"
-             :rowKey="record => record['name']"
-             :dataSource="labels"
-             :pagination="false"
-             :scroll="{y: 200}"
-             style="margin-bottom: 30px">
-      <template v-for="column in labelColumns" v-if="column.scopedSlots" :slot="column.dataIndex" slot-scope="text, record">
-        <div :key="column.dataIndex">
-          <a-input v-if="record.editable"
-                   v-model="record['editor'][column.dataIndex]"
-                   style="margin: -6px 0"/>
-          <template v-else>{{ text }}</template>
-        </div>
-      </template>
-      <template slot="action" slot-scope="text, record">
-        <div class="editable-row-operations">
-          <span v-if="record.editable">
-            <a @click="() => save(record)">保存</a>
-            <a-divider type="vertical"/>
-            <a @click="() => remove(record, labels)">取消</a>
-          </span>
-          <span v-else>
-            <a @click="() => record.editable = true">修改</a>
-            <a-divider type="vertical"/>
-            <a @click="() => remove(record, labels)">移除</a>
-          </span>
-        </div>
-      </template>
-      <div slot="footer" style="text-align: right;">
-        <a><a-button shape="circle"
-                     type="primary"
-                     icon="plus"
-                     size="small"
-                     style="margin-right: 5px"
-                     @click="append(labels)"/>
-          新增配置项标签
-        </a>
-      </div>
-    </a-table>
+    <common-labels :data="labels" :button-text="'新增配置项标签'" style="margin-bottom: 30px"/>
 
     <div :style="{position: 'absolute', right: 0, bottom: 0, width: '100%', borderTop: '1px solid #e9e9e9', padding: '10px 16px', background: '#fff', textAlign: 'right',zIndex: 1}">
       <a-button :style="{ marginRight: '8px' }" @click="onClose">取消</a-button>
@@ -71,13 +33,16 @@
 
 <script>
   import { CocoTopic, CocoCodeMirror } from '@/components'
+  import CommonLabels from '@/views/swarm/common/labels'
   import { invokeApi } from '@/api/http'
+  import { isEmpty, isNotEmpty, cloneDeep } from '@/utils/util'
 
   export default {
     name: 'ConfigForm',
     components: {
       CocoCodeMirror,
-      CocoTopic
+      CocoTopic,
+      CommonLabels
     },
     props: {
       visible: {
@@ -102,24 +67,6 @@
           }
         },
         form: this.$form.createForm(this),
-        labelColumns: [
-          {
-            title: '标签名',
-            dataIndex: 'name',
-            scopedSlots: { customRender: 'name' }
-          },
-          {
-            title: '标签值',
-            dataIndex: 'value',
-            scopedSlots: { customRender: 'value' }
-          },
-          {
-            title: '操作',
-            dataIndex: 'action',
-            scopedSlots: { customRender: 'action' },
-            width: 130
-          }
-        ],
         labels: [],
         configContent: '',
         creating: false,
@@ -147,7 +94,7 @@
                 name: key,
                 value: response.data['Spec']['Labels'][key]
               }
-              record['editor'] = _.cloneDeep(record)
+              record['editor'] = cloneDeep(record)
               record.editable = false
               this.labels.push(record)
             })
@@ -192,20 +139,6 @@
       },
       onClose() {
         this.$emit('on-close')
-      },
-      append(data) {
-        const record = {}
-        record['editor'] = _.cloneDeep(record)
-        record.editable = true
-        data.push(record)
-      },
-      save(record) {
-        record = Object.assign(record, record['editor'])
-        record.editable = false
-      },
-      remove(record, data) {
-        const index = data.indexOf(record)
-        data.splice(index, 1)
       }
     },
     watch: {
@@ -213,7 +146,7 @@
         deep: true,
         immediate: true,
         handler(currVisible) {
-          if (currVisible && _.isEmpty(this.configId)) {
+          if (currVisible && isEmpty(this.configId)) {
             this.form.resetFields()
             this.configContent = ''
             this.labels = []
@@ -225,7 +158,7 @@
         deep: true,
         immediate: true,
         handler(currConfigId) {
-          if (!_.isEmpty(currConfigId)) {
+          if (isNotEmpty(currConfigId)) {
             this.loadConfig(currConfigId)
             this.cmOptions['readOnly'] = 'nocursor'
           }
