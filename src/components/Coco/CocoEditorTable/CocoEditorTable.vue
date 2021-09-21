@@ -70,6 +70,10 @@
       buttonText: {
         type: String,
         default: '新增'
+      },
+      defaultValue: {
+        type: Object,
+        default: () => {}
       }
     },
     data() {
@@ -80,6 +84,7 @@
       append(data) {
         const record = {}
         record['editor'] = cloneDeep(record)
+        record['editor'] = Object.assign(record['editor'], this.defaultValue)
         record['editable'] = true
         data.push(record)
         this.$emit('append', record)
