@@ -179,6 +179,16 @@ export function isFunction(any) {
 }
 
 /**
+ * 判断是否不为数字
+ *
+ * @param any
+ * @returns {boolean}
+ */
+export function isNotNumber(any) {
+  return !isNumber(any)
+}
+
+/**
  * 判断是否为数字
  *
  * @param any

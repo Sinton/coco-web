@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { convertSize, dateFormat } from './util'
+import { convertSize, dateFormat, isEmpty, isNotNumber } from './util'
 
 Vue.filter('NumberFormat', (value) => {
   if (!value) {
@@ -34,7 +34,10 @@ Vue.filter('trimShaSum', (imageName) => {
 })
 
 Vue.filter('truncate', (text, length, suffix) => {
-  if (isNaN(length)) {
+  if (isEmpty(text)) {
+    text = ''
+  }
+  if (isNotNumber(length)) {
     length = 10
   }
   if (suffix === undefined) {
@@ -48,9 +51,9 @@ Vue.filter('truncate', (text, length, suffix) => {
 })
 
 Vue.filter('truncatelr', (text, max, left, right) => {
-  max = isNaN(max) ? 50 : max
-  left = isNaN(left) ? 25 : left
-  right = isNaN(right) ? 25 : right
+  max = isNotNumber(max) ? 50 : max
+  left = isNotNumber(left) ? 25 : left
+  right = isNotNumber(right) ? 25 : right
 
   if (text.length <= max) {
     return text
