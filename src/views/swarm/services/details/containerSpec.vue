@@ -15,7 +15,7 @@
 
 <script>
   export default {
-    name: 'ServiceContainerSpec',
+    name: 'DetailsServiceContainerSpec',
     props: {
       data: {
         type: Object,

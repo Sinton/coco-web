@@ -1,7 +1,7 @@
 <template>
   <coco-editor-table :columns="columns"
                      :data="data"
-                     :button-text="'添加端口映射'"
+                     :button-text="'添加存储卷'"
                      :default-value="{ volumeType: 'bind' }"
                      @save="() => this.$emit('changed')"
                      @remove="() => this.$emit('changed')">
