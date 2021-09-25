@@ -38,16 +38,16 @@
     <service-container-spec :data="containerSpec"/>
     <details-service-service-envs :id="serviceId" :data="envs"/>
     <details-service-container-labels :id="serviceId" :data="containerLabels"/>
-    <details-service-service-volumes :data="volumes"/>
+    <details-service-service-volumes :id="serviceId" :data="volumes"/>
     <service-networks :data="networks"/>
     <details-service-service-ports :id="serviceId" :data="ports"/>
-    <service-resources :data="resources"/>
+    <details-service-resources :id="serviceId" :data="resources"/>
     <service-placement-constraints :data="placementConstraints"/>
     <details-service-restart-policy :id="serviceId" :data="restartPolicy"/>
     <details-service-update-config :id="serviceId" :data="updateConfig"/>
     <details-service-service-labels :id="serviceId" :data="serviceLabels"/>
-    <service-configs :data="configs"/>
-    <service-secrets :data="secrets"/>
+    <service-configs :id="serviceId" :data="configs"/>
+    <service-secrets :id="serviceId" :data="secrets"/>
     <service-tasks :service-id="serviceId"/>
 
     <!-- 服务摘要 -->
@@ -68,7 +68,7 @@
   import DetailsServiceServiceVolumes from '@views/swarm/services/details/volumes'
   import ServiceNetworks from '@views/swarm/services/details/networks'
   import DetailsServiceServicePorts from '@views/swarm/services/details/ports'
-  import ServiceResources from '@views/swarm/services/details/resources'
+  import DetailsServiceResources from '@views/swarm/services/details/resources'
   import ServicePlacementConstraints from '@views/swarm/services/details/placementConstraints'
   import DetailsServiceRestartPolicy from '@views/swarm/services/details/restartPolicy'
   import DetailsServiceUpdateConfig from '@views/swarm/services/details/updateConfig'
@@ -89,7 +89,7 @@
       DetailsServiceServiceVolumes,
       ServiceNetworks,
       DetailsServiceServicePorts,
-      ServiceResources,
+      DetailsServiceResources,
       ServicePlacementConstraints,
       DetailsServiceRestartPolicy,
       DetailsServiceUpdateConfig,
