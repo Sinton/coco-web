@@ -59,7 +59,7 @@
           {
             title: '操作',
             dataIndex: 'action',
-            width: 150,
+            width: 120,
             scopedSlots: { customRender: 'action' }
           }
         ]
