@@ -35,14 +35,14 @@
       <a-divider type="vertical" />
       <a-button type="link" icon="exclamation-circle" @click="inspectService">摘要</a-button>
     </a-card>
-    <service-container-spec :data="containerSpec"/>
+    <details-service-container-spec :data="containerSpec"/>
     <details-service-service-envs :id="serviceId" :data="envs"/>
     <details-service-container-labels :id="serviceId" :data="containerLabels"/>
     <details-service-service-volumes :id="serviceId" :data="volumes"/>
     <service-networks :data="networks"/>
     <details-service-service-ports :id="serviceId" :data="ports"/>
     <details-service-resources :id="serviceId" :data="resources"/>
-    <service-placement-constraints :data="placementConstraints"/>
+    <details-service-placement-constraints :id="serviceId" :data="placementConstraints"/>
     <details-service-restart-policy :id="serviceId" :data="restartPolicy"/>
     <details-service-update-config :id="serviceId" :data="updateConfig"/>
     <details-service-service-labels :id="serviceId" :data="serviceLabels"/>
@@ -62,14 +62,14 @@
 <script>
   import { PageView } from '@/layouts'
   import { STable, CocoJsonViewer } from '@/components'
-  import ServiceContainerSpec from '@views/swarm/services/details/containerSpec'
+  import DetailsServiceContainerSpec from '@views/swarm/services/details/containerSpec'
   import DetailsServiceServiceEnvs from '@views/swarm/services/details/envs'
   import DetailsServiceContainerLabels from '@views/swarm/services/details/containerLabels'
   import DetailsServiceServiceVolumes from '@views/swarm/services/details/volumes'
   import ServiceNetworks from '@views/swarm/services/details/networks'
   import DetailsServiceServicePorts from '@views/swarm/services/details/ports'
   import DetailsServiceResources from '@views/swarm/services/details/resources'
-  import ServicePlacementConstraints from '@views/swarm/services/details/placementConstraints'
+  import DetailsServicePlacementConstraints from '@views/swarm/services/details/placementConstraints'
   import DetailsServiceRestartPolicy from '@views/swarm/services/details/restartPolicy'
   import DetailsServiceUpdateConfig from '@views/swarm/services/details/updateConfig'
   import DetailsServiceServiceLabels from '@views/swarm/services/details/serviceLabels'
@@ -83,14 +83,14 @@
   export default {
     name: 'ServiceDetails',
     components: {
-      ServiceContainerSpec,
+      DetailsServiceContainerSpec,
       DetailsServiceServiceEnvs,
       DetailsServiceContainerLabels,
       DetailsServiceServiceVolumes,
       ServiceNetworks,
       DetailsServiceServicePorts,
       DetailsServiceResources,
-      ServicePlacementConstraints,
+      DetailsServicePlacementConstraints,
       DetailsServiceRestartPolicy,
       DetailsServiceUpdateConfig,
       DetailsServiceServiceLabels,
