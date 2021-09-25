@@ -1,20 +1,25 @@
 <template>
   <coco-editor-table :columns="columns"
-                     :data="constraints"
-                     :button-text="'添加约束条件'">
+                     :data="data"
+                     :button-text="'添加约束条件'"
+                     :default-value="{ operator: '==' }"
+                     @save="() => this.$emit('changed')"
+                     @remove="() => this.$emit('changed')">
     <template slot="body" slot-scope="item">
       <template v-if="item.record['editable']">
-        <a-input v-if="item.column['dataIndex'] !== 'Operator'"
-                 v-model="item.record['editor'][item.column['dataIndex']]"/>
-        <a-select v-else-if="item.column['dataIndex'] === 'Operator'"
+        <a-input v-if="item.column['dataIndex'] !== 'operator'"
+                 v-model="item.record['editor'][item.column['dataIndex']]"
+                 style="margin: -6px 0; width: 100%;"/>
+        <a-select v-else-if="item.column['dataIndex'] === 'operator'"
                   v-model="item.record['editor'][item.column['dataIndex']]"
-                  style="width: 100px;">
+                  style="margin: -6px 0; width: 100%;">
           <a-select-option value="==">==</a-select-option>
           <a-select-option value="!=">!=</a-select-option>
         </a-select>
       </template>
       <template v-else>{{ item.text }}</template>
     </template>
+    <slot name="applyOperation" slot="footerLeft"></slot>
   </coco-editor-table>
 </template>
 
@@ -37,19 +42,19 @@
         columns: [
           {
             title: '名称',
-            dataIndex: 'Name',
+            dataIndex: 'name',
             sorter: true,
-            scopedSlots: { customRender: 'Name' }
+            scopedSlots: { customRender: 'name' }
           },
           {
             title: '运算符',
-            dataIndex: 'Operator',
-            scopedSlots: { customRender: 'Operator' }
+            dataIndex: 'operator',
+            scopedSlots: { customRender: 'operator' }
           },
           {
             title: '值',
-            dataIndex: 'Value',
-            scopedSlots: { customRender: 'Value' }
+            dataIndex: 'value',
+            scopedSlots: { customRender: 'value' }
           },
           {
             title: '操作',
@@ -57,30 +62,7 @@
             width: 150,
             scopedSlots: { customRender: 'action' }
           }
-        ],
-        constraints: []
-      }
-    },
-    methods: {
-      renderData() {
-        this.data.forEach(item => {
-          this.constraints.push({
-            Name: item.split(' ')[0],
-            Operator: item.split(' ')[1],
-            Value: item.split(' ')[2]
-          })
-        })
-      }
-    },
-    watch: {
-      data: {
-        deep: true,
-        immediate: true,
-        handler() {
-          if (!_.isEmpty(this.data)) {
-            this.renderData()
-          }
-        }
+        ]
       }
     }
   }
