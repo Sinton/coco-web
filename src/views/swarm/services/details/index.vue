@@ -46,7 +46,7 @@
     <details-service-restart-policy :id="serviceId" :data="restartPolicy"/>
     <details-service-update-config :id="serviceId" :data="updateConfig"/>
     <details-service-service-labels :id="serviceId" :data="serviceLabels"/>
-    <service-configs :id="serviceId" :data="configs"/>
+    <details-service-configs :id="serviceId" :data="configs"/>
     <service-secrets :id="serviceId" :data="secrets"/>
     <service-tasks :service-id="serviceId"/>
 
@@ -73,7 +73,7 @@
   import DetailsServiceRestartPolicy from '@views/swarm/services/details/restartPolicy'
   import DetailsServiceUpdateConfig from '@views/swarm/services/details/updateConfig'
   import DetailsServiceServiceLabels from '@views/swarm/services/details/serviceLabels'
-  import ServiceConfigs from '@views/swarm/services/details/configs'
+  import DetailsServiceConfigs from '@views/swarm/services/details/configs'
   import ServiceSecrets from '@views/swarm/services/details/secrets'
   import ServiceTasks from '@views/swarm/services/details/tasks'
   import { dateFormat, isEmpty } from '@/utils/util'
@@ -94,7 +94,7 @@
       DetailsServiceRestartPolicy,
       DetailsServiceUpdateConfig,
       DetailsServiceServiceLabels,
-      ServiceConfigs,
+      DetailsServiceConfigs,
       ServiceSecrets,
       ServiceTasks,
       PageView,
