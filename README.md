@@ -1,26 +1,26 @@
 English | [简体中文](./README.zh-CN.md)
 
-<h1 align="center">Ant Design Pro Vue</h1>
+<h1 align="center">Docker CaaS Web</h1>
 
 <div align="center">
-An out-of-box UI solution for enterprise applications as a Vue boilerplate. based on  <a href="https://vuecomponent.github.io/ant-design-vue/docs/vue/introduce-cn/" target="_blank">Ant Design of Vue</a>
+Docker devOps manager solution for enterprise applications
 </div>
 
 <div align="center">
 
-[![Backers on Open Collective](https://opencollective.com/ant-design-pro-vue/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/ant-design-pro-vue/sponsors/badge.svg)](#sponsors) [![License](https://img.shields.io/npm/l/package.json.svg?style=flat)](https://github.com/sendya/ant-design-pro-vue/blob/master/LICENSE)
-[![Release](https://img.shields.io/github/release/sendya/ant-design-pro-vue.svg?style=flat)](https://github.com/sendya/ant-design-pro-vue/releases/latest)
-[![Travis branch](https://travis-ci.org/sendya/ant-design-pro-vue.svg?branch=master)](https://travis-ci.org/sendya/ant-design-pro-vue)
+[![Backers on Open Collective](https://opencollective.com/coco-web/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/ant-design-pro-vue/sponsors/badge.svg)](#sponsors) [![License](https://img.shields.io/npm/l/package.json.svg?style=flat)](https://github.com/sendya/ant-design-pro-vue/blob/master/LICENSE)
+[![Release](https://img.shields.io/github/release/sendya/coco-web.svg?style=flat)](https://github.com/sinton/coco-web/releases/latest)
+[![Travis branch](https://travis-ci.org/sendya/coco-web.svg?branch=master)](https://travis-ci.org/sendya/coco-web)
 
 </div>
 
-- Preview: https://preview.pro.loacg.com
-- Home Page: https://pro.loacg.com
-- Documentation: https://pro.loacg.com/docs/getting-started
-- ChangeLog: https://pro.loacg.com/docs/changelog
-- FAQ: https://pro.loacg.com/docs/faq
+- Demo: https://demo.caas.0x1010.com
+- Home Page: https://caas.0x1010.com
+- Documentation: https://caas.0x1010.com/docs/getting-started
+- ChangeLog: https://caas.0x1010.com/docs/changelog
+- FAQ: https://caas.0x1010.com/docs/faq
 - Branches:
-  - feature/pro: antdv-pro
+  - feature/pro: antdv framework
   - feature/third-party-auth: LDAP、Github's OAuth support
   - feature/ic: aliyun's ECS、amazon's AWS support
 
