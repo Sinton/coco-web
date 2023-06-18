@@ -270,7 +270,7 @@
               value: response.data['Config']['ExposedPorts'] || null,
               prop: 'ExposedPorts'
             }, {
-              label: '挂载卷',
+              label: '存储卷',
               value: response.data['Config']['Volumes'] || null,
               prop: 'Volumes'
             }, {
