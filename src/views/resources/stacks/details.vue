@@ -9,6 +9,7 @@
 <script>
   import { PageView } from '@/layouts'
   import ContainerList from '@/views/resources/containers/list'
+  import { isNotEmpty } from '@/utils/util'
 
   export default {
     name: 'StackDetails',
