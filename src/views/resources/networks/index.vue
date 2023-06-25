@@ -1,6 +1,6 @@
 <template>
   <page-view>
-    <a-card :title="'容器网络列表'" :bordered="false">
+    <a-card :title="'网络列表'" :bordered="false">
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['networksRef'].refresh()">刷新</a-button>
         <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeNetwork">删除</a-button>
@@ -64,6 +64,7 @@
     },
     data() {
       return {
+        endpointChanged: false,
         columns: [
           {
             title: '网络名称',
@@ -198,6 +199,21 @@
             this.$notification.error({ message: '标题', description: '加载数据失败' })
           }
         })
+      }
+    },
+    activated() {
+      if (this.endpointChanged) {
+        this.$refs['networksRef'].refresh()
+        this.endpointChanged = false
+      }
+    },
+    watch: {
+      '$store.state.app.endpoint': {
+        deep: true,
+        immediate: true,
+        handler() {
+          this.endpointChanged = true
+        }
       }
     }
   }
