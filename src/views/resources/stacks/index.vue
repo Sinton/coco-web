@@ -61,6 +61,7 @@
     },
     data() {
       return {
+        endpointChanged: false,
         queryParam: [],
         stackOption: {
           columns: [
@@ -153,6 +154,21 @@
     },
     mounted() {
       this.loadingStacks = true
+    },
+    activated() {
+      if (this.endpointChanged) {
+        this.$refs['stacksRef'].refresh()
+        this.endpointChanged = false
+      }
+    },
+    watch: {
+      '$store.state.app.endpoint': {
+        deep: true,
+        immediate: true,
+        handler() {
+          this.endpointChanged = true
+        }
+      }
     }
   }
 </script>
