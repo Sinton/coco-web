@@ -25,11 +25,12 @@
                       two-tone-color="#1890ff"
                       style="margin-right: 10px"
                       @click="visibleEndpointData('modify', record)"/>
-              <a-icon type="delete"
-                      theme="twoTone"
-                      two-tone-color="#ff4d4f"
-                      style="margin-right: 10px"
-                      @click="removeEndpoints(record)"/>
+              <a-popconfirm title="确认要移除？" ok-text="确认" cancel-text="取消" @confirm="removeEndpoints(record)">
+                <a-icon type="delete"
+                        theme="twoTone"
+                        two-tone-color="#ff4d4f"
+                        style="margin-right: 10px; cursor:pointer"/>
+              </a-popconfirm>
               <a-tag :color="record['status'] === 1 ? '#52c41a' : '#f5222d'">{{ record['status'] === 1 ? '在线' : '下线' }}</a-tag>
               {{ record['updateDateTime'] | moment }}
             </template>
