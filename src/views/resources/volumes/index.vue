@@ -1,10 +1,10 @@
 <template>
   <page-view>
-    <a-card :title="'挂载卷列表'" :bordered="false">
+    <a-card :title="'存储卷列表'" :bordered="false">
       <div class="table-operator">
         <a-button icon="reload" @click="() => $refs['volumesRef'].refresh()">刷新</a-button>
         <a-button type="danger" icon="delete" :disabled="!selectedRows.length > 0" @click="removeVolume">删除</a-button>
-        <a-button type="primary" icon="plus" @click="() => this.visible = true">创建挂载卷</a-button>
+        <a-button type="primary" icon="plus" @click="() => this.visible = true">创建存储卷</a-button>
       </div>
       <s-table ref="volumesRef"
                :rowKey="record => record['Name']"
@@ -43,9 +43,10 @@
     },
     data() {
       return {
+        endpointChanged: false,
         columns: [
           {
-            title: '挂载卷名称',
+            title: '存储卷名称',
             dataIndex: 'Name',
             sorter: true,
             scopedSlots: { customRender: 'Name' },
@@ -58,7 +59,7 @@
             scopedSlots: { customRender: 'Stack' }
           },
           {
-            title: '挂载卷驱动',
+            title: '存储卷驱动',
             dataIndex: 'Driver',
             sorter: true,
             scopedSlots: { customRender: 'Driver' },
@@ -151,6 +152,21 @@
             this.$refs['volumesRef'].refresh()
           })
         })
+      }
+    },
+    activated() {
+      if (this.endpointChanged) {
+        this.$refs['volumesRef'].refresh()
+        this.endpointChanged = false
+      }
+    },
+    watch: {
+      '$store.state.app.endpoint': {
+        deep: true,
+        immediate: true,
+        handler() {
+          this.endpointChanged = true
+        }
       }
     }
   }
