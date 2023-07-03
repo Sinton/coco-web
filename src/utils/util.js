@@ -199,6 +199,26 @@ export function isNumber(any) {
 }
 
 /**
+ * 判断是否不为字符串
+ *
+ * @param any
+ * @returns {boolean}
+ */
+export function isNotString(any) {
+  return !isString(any)
+}
+
+/**
+ * 判断是否为喂字符串
+ *
+ * @param any
+ * @returns {value is string}
+ */
+export function isString(any) {
+  return _.isString(any)
+}
+
+/**
  * 对象深度拷贝
  *
  * @param any
