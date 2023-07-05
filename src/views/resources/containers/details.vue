@@ -156,10 +156,10 @@
 
 <script>
   import { PageView } from '@/layouts'
-  import { DetailList, CocoJsonViewer, CocoLogs } from '@/components'
-  import { invokeApi } from '@api/http'
+  import { DetailList, CocoJsonViewer, CocoLogs, CocoShield } from '@/components'
   import { common, containers } from '@/mixins'
-  import CocoShield from '@comp/Coco/CocoShield/CocoShield'
+  import { invokeApi } from '@api/http'
+  import { isNotEmpty, isNotString } from '@/utils/util'
 
   const DetailListItem = DetailList.Item
 
@@ -325,6 +325,7 @@
         return portBindings
       },
       buildContainerStatus() {
+        this.detailsOption.status = []
         this.detailsOption.status.push(
           {
             label: '容器名称',
@@ -379,40 +380,41 @@
         })
       },
       buildContainerDetails() {
+        this.detailsOption.details = []
         this.detailsOption.details.push({
           label: '镜像',
           value: `${this.containerInspect['Config']['Image']}@${this.containerInspect['Image']}`,
           prop: 'image'
         })
-        if (!_.isEmpty(Object.values(this.containerInspect['NetworkSettings']['Ports']).filter(item => !_.isEmpty(item)))) {
+        if (isNotEmpty(Object.values(this.containerInspect['NetworkSettings']['Ports']).filter(item => isNotEmpty(item)))) {
           this.detailsOption.details.push({
             label: '映射端口',
             value: this.convertPorts(this.containerInspect['NetworkSettings']['Ports']),
             prop: 'ports'
           })
         }
-        if (!_.isString(this.containerInspect['Config']['Cmd'])) {
+        if (isNotString(this.containerInspect['Config']['Cmd'])) {
           this.detailsOption.details.push({
             label: '命令行',
             value: this.containerInspect['Config']['Cmd'],
             prop: 'cmds'
           })
         }
-        if (!_.isEmpty(this.containerInspect['Config']['Entrypoint'])) {
+        if (isNotEmpty(this.containerInspect['Config']['Entrypoint'])) {
           this.detailsOption.details.push({
             label: '启动入口',
             value: this.containerInspect['Config']['Entrypoint'],
             prop: 'entrypoint'
           })
         }
-        if (!_.isEmpty(this.containerInspect['Config']['Env'])) {
+        if (isNotEmpty(this.containerInspect['Config']['Env'])) {
           this.detailsOption.details.push({
             label: '环境变量',
             value: this.convertEnv(this.containerInspect['Config']['Env']),
             prop: 'envs'
           })
         }
-        if (!_.isEmpty(this.containerInspect['Config']['Labels'])) {
+        if (isNotEmpty(this.containerInspect['Config']['Labels'])) {
           this.detailsOption.details.push({
             label: '标签',
             value: this.containerInspect['Config']['Labels'],
