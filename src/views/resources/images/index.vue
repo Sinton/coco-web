@@ -114,6 +114,7 @@
     },
     data() {
       return {
+        endpointChanged: false,
         queryParam: {},
         columns: [
           {
@@ -290,8 +291,19 @@
         }
       }
     },
+    sockets: {
+      connect: function() {
+        console.log('connect')
+      },
+      pull: function() {
+        console.log('pull')
+      }
+    },
     mounted() {
-      this.sockets.listener.subscribe('pull', (data) => {
+      console.log('$socket', this.$socket)
+      console.log('sockets', this.sockets)
+      console.log('sockets', this.sockets.subscribe)
+      this.sockets.subscribe('pull', (data) => {
         if (_.isEmpty(data.id)) {
           if (data['status'].startsWith('Status:') || data['status'].startsWith('Digest:')) {
             this.pulling = false
@@ -314,6 +326,21 @@
           }
         }
       })
+    },
+    activated() {
+      if (this.endpointChanged) {
+        this.$refs['imagesRef'].refresh()
+        this.endpointChanged = false
+      }
+    },
+    watch: {
+      '$store.state.app.endpoint': {
+        deep: true,
+        immediate: true,
+        handler() {
+          this.endpointChanged = true
+        }
+      }
     }
   }
 </script>
